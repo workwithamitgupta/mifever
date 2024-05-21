@@ -47,6 +47,9 @@ class ThemeHelper {
     var colorScheme =
         _supportedColorScheme[_appTheme] ?? ColorSchemes.primaryColorScheme;
     return ThemeData(
+      textSelectionTheme: TextSelectionThemeData(
+          cursorColor: appTheme.redA200,
+          selectionHandleColor: appTheme.redA200),
       visualDensity: VisualDensity.standard,
       colorScheme: colorScheme,
       textTheme: TextThemes.textTheme(colorScheme),

@@ -101,7 +101,10 @@ class QuestionThreeScreen extends GetWidget<QuestionThreeController> {
                 () => Text(
                   controller.selectedDate.value,
                   // "msg_select_your_birth".tr,
-                  style: CustomTextStyles.bodySmall12,
+                  style: theme.textTheme.bodySmall!.copyWith(
+                      color: appTheme.gray900, fontWeight: FontWeight.bold),
+
+                  //CustomTextStyles.bodySmallPrimary_1,
                 ),
               ),
             ),
@@ -133,8 +136,6 @@ class QuestionThreeScreen extends GetWidget<QuestionThreeController> {
           width: 24.adaptSize,
         ),
       ),
-      buttonStyle: null,
-      //controller.isButtonDisable.value ? CustomButtonStyles.fillGray : null,
       onPressed: _onTapContinue,
     );
   }
@@ -158,9 +159,11 @@ class QuestionThreeScreen extends GetWidget<QuestionThreeController> {
                 Theme(
                   data: ThemeData(indicatorColor: appTheme.redA200),
                   child: CalendarDatePicker(
-                    initialDate: controller.initialDateTime.value,
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2030),
+                    initialDate:
+                        DateTime.now().subtract(Duration(days: 18 * 366)),
+                    firstDate:
+                        DateTime.now().subtract(Duration(days: 60 * 366)),
+                    lastDate: DateTime.now().subtract(Duration(days: 18 * 366)),
                     onDateChanged: (DateTime date) {
                       if (date != controller.initialDateTime.value) {
                         controller.initialDateTime.value = date;
@@ -190,7 +193,8 @@ class QuestionThreeScreen extends GetWidget<QuestionThreeController> {
                   backgroundColor: appTheme.redA200),
               onPressed: () {
                 controller.selectedDate.value =
-                    '${controller.initialDateTime.value.day}/${controller.initialDateTime.value.month}/${controller.initialDateTime.value.year}';
+                    controller.initialDateTime.value.format();
+                //'${controller.initialDateTime.value.day}/${controller.initialDateTime.value.month}/${controller.initialDateTime.value.year}';
                 Navigator.of(context).pop();
                 Get.dialog(Center(
                   child: QuestionThreeDialog(
@@ -205,11 +209,5 @@ class QuestionThreeScreen extends GetWidget<QuestionThreeController> {
         );
       },
     );
-
-    if (picked != null && picked != controller.initialDateTime.value) {
-      controller.initialDateTime.value = picked;
-      controller.selectedDate.value =
-          '${picked.day}/${picked.month}/${picked.year}';
-    }
   }
 }

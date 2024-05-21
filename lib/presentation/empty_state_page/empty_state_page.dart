@@ -34,17 +34,16 @@ class EmptyStatePage extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 120.adaptSize,
-            width: 120.adaptSize,
-            padding: EdgeInsets.all(28.h),
+            alignment: Alignment.center,
+            height: 120.h,
+            width: 120.v,
             decoration: AppDecoration.fillRed.copyWith(
               borderRadius: BorderRadiusStyle.circleBorder60,
             ),
             child: CustomImageView(
               imagePath: ImageConstant.imgUserOnprimary,
-              height: 64.h,
-              width: 64.v,
               alignment: Alignment.center,
+              fit: BoxFit.cover,
             ),
           ),
           SizedBox(height: 19.v),
@@ -71,6 +70,9 @@ class EmptyStatePage extends StatelessWidget {
           ),
           SizedBox(height: 14.v),
           CustomElevatedButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.subscriptionPlansScreen);
+            },
             text: "msg_upgrade_your_plan3".tr,
           ),
         ],

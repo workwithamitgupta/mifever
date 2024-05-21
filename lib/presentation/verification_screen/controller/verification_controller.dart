@@ -15,7 +15,6 @@ class VerificationController extends GetxController with CodeAutoFill {
   RxInt minutes = 1.obs;
   RxInt seconds = 30.obs;
   late Timer timer;
-
   var email = ''.obs;
   var route = ''.obs;
 

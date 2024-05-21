@@ -17,7 +17,7 @@ class CreateTravelPlanController extends GetxController {
 
   Rx<CreateTravelPlanModel> createTravelPlanModelObj =
       CreateTravelPlanModel().obs;
-  Rx<DateTime> initialDateTime = DateTime.now().obs;
+  Rx<DateTime> initialDateTime = DateTime.now().add(Duration(days: 1)).obs;
   Rx<GeoPoint> locationLatLong = GeoPoint(0, 0).obs;
   Rx<DateTime> startDate = DateTime.now().obs;
   //'msg_select_your_travel'.tr.obs;

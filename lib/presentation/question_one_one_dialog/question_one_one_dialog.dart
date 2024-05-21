@@ -27,6 +27,10 @@ class QuestionOneOneDialog extends StatelessWidget {
             CustomImageView(
               onTap: () {
                 Get.back();
+                controller.recordedFilePath.value = '';
+                VoiceRecorderController.isRecording.value = false;
+                VoiceRecorderController.stopRecording();
+                timerController.stopTimer();
               },
               imagePath: ImageConstant.imgArrowRightGray60004,
               height: 24.adaptSize,
@@ -79,35 +83,52 @@ class QuestionOneOneDialog extends StatelessWidget {
               ),
             ),
             SizedBox(height: 15.v),
-            Obx(
-              () => Visibility(
-                visible: VoiceRecorderController.isRecording.value,
-                child: Column(
-                  children: [
-                    CustomElevatedButton(
-                      text: "lbl_continue".tr,
-                      onPressed: () async {
-                        timerController.stopTimer();
-                        controller.recordedFilePath.value =
-                            await VoiceRecorderController.stopRecording();
+            Visibility(
+              child: Column(
+                children: [
+                  Obx(
+                    () => Visibility(
+                      visible: timerController.timerValue.value == '00:00',
+                      child: CustomElevatedButton(
+                        text: "lbl_continue".tr,
+                        onPressed: () async {
+                          controller.timingSeconds.value = timerController
+                                      .timerValue.value ==
+                                  '00:03'
+                              ? 0
+                              : (timerController.timerValue.value == '00:02'
+                                  ? 1
+                                  : timerController.timerValue.value == '00:01'
+                                      ? 2
+                                      : 3);
+                          timerController.stopTimer();
+                          controller.recordedFilePath.value =
+                              await VoiceRecorderController.stopRecording();
 
-                        Get.back();
-                      },
+                          Get.back();
+                        },
+                      ),
                     ),
-                    SizedBox(height: 16.v),
-                    CustomOutlinedButton(
-                      onPressed: () {
-                        controller.recordedFilePath.value = '';
-                        VoiceRecorderController.isRecording.value = false;
-                        timerController.stopTimer();
-                      },
-                      height: 42.v,
-                      text: "lbl_restart".tr,
-                      buttonStyle: CustomButtonStyles.outlineRedATL21,
-                      buttonTextStyle: CustomTextStyles.titleMediumRedA200,
+                  ),
+                  SizedBox(height: 16.v),
+                  Obx(
+                    () => Visibility(
+                      visible: VoiceRecorderController.isRecording.value,
+                      child: CustomOutlinedButton(
+                        onPressed: () {
+                          controller.recordedFilePath.value = '';
+                          VoiceRecorderController.isRecording.value = false;
+                          VoiceRecorderController.stopRecording();
+                          timerController.stopTimer();
+                        },
+                        height: 42.v,
+                        text: "lbl_restart".tr,
+                        buttonStyle: CustomButtonStyles.outlineRedATL21,
+                        buttonTextStyle: CustomTextStyles.titleMediumRedA200,
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 12.v),

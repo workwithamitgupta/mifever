@@ -6,6 +6,7 @@ import 'package:mifever/widgets/custom_elevated_button.dart';
 import 'package:mifever/widgets/custom_outlined_button.dart';
 
 import '../../data/models/user/user_model.dart';
+import '../../data/sevices/firebase_analytics_service/firebase_analytics_service.dart';
 import '../chat_screen/chat_screen.dart';
 import 'controller/match_screen_two_controller.dart';
 
@@ -141,6 +142,8 @@ class MatchScreenTwoScreen extends GetWidget<MatchScreenTwoController> {
                                         UserModel _user = UserModel.fromJson(
                                             data!.data()
                                                 as Map<String, dynamic>);
+                                        AnalyticsService.match(
+                                            _user.name ?? '');
                                         return CustomImageView(
                                           imagePath:
                                               _user.profileImage!.isNotEmpty

@@ -5,6 +5,7 @@ import 'package:mifever/data/models/user/user_model.dart';
 import 'package:mifever/presentation/edit_other_details_screen/models/edit_other_details_model.dart';
 
 import '../../../data/sevices/firebase_services.dart';
+import '../../question_five_screen/controller/question_five_controller.dart';
 
 class EditOtherDetailsController extends GetxController {
   TextEditingController cityController = TextEditingController();
@@ -14,9 +15,7 @@ class EditOtherDetailsController extends GetxController {
   Rx<EditOtherDetailsModel> editOtherDetailsModelObj =
       EditOtherDetailsModel().obs;
 
-  var locationControllerCityControllerList = <TextEditingController>[].obs;
-  var locationControllerCountryControllerList = <TextEditingController>[].obs;
-
+  List<LocationModel> availableLocation = <LocationModel>[].obs;
   Rx<String> whatDoYouWantToFindOut = "lbl_casual_dating".tr.obs;
 
   List selectedInterest = [].obs;
@@ -44,29 +43,11 @@ class EditOtherDetailsController extends GetxController {
     UserModel _userModel = UserModel(
       interestList: selectedInterest,
       whatDoYouWant: whatDoYouWantToFindOut.value,
-      availableCity: getCity(),
-      availableCountry: getCountry(),
+      availableLocation: availableLocation,
     );
     await FirebaseServices.updateUser(_userModel);
     ProgressDialogUtils.hideProgressDialog();
-  }
-
-  List getCity() {
-    List _city = [];
-
-    for (var city in locationControllerCityControllerList) {
-      _city.add(city.text);
-    }
-    return _city;
-  }
-
-  List getCountry() {
-    List _country = [];
-
-    for (var country in locationControllerCountryControllerList) {
-      _country.add(country.text);
-    }
-    return _country;
+    Get.back();
   }
 
   @override
@@ -76,15 +57,7 @@ class EditOtherDetailsController extends GetxController {
         selectedInterest.clear();
         selectedInterest.addAll(user.interestList ?? []);
         whatDoYouWantToFindOut.value = user.whatDoYouWant ?? '';
-
-        for (var i = 0; i < user.availableCity!.length; i++) {
-          locationControllerCityControllerList.add(TextEditingController());
-          locationControllerCountryControllerList.add(TextEditingController());
-          locationControllerCityControllerList[i].text =
-              user.availableCity?[i] ?? '';
-          locationControllerCountryControllerList[i].text =
-              user.availableCountry?[i] ?? '';
-        }
+        availableLocation.assignAll(user.availableLocation!);
       }
     });
     super.onInit();

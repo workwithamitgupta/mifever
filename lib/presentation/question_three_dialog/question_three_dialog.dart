@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/widgets/custom_elevated_button.dart';
 
+import '../question_three_screen/controller/question_three_controller.dart';
+
 class QuestionThreeDialog extends StatelessWidget {
-  QuestionThreeDialog(this.age, {Key? key}) : super(key: key);
-
+  QuestionThreeDialog(
+    this.age, {
+    Key? key,
+  }) : super(key: key);
   int age;
-
+  final questionThreeController = Get.find<QuestionThreeController>();
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -54,6 +58,8 @@ class QuestionThreeDialog extends StatelessWidget {
             SizedBox(height: 20.v),
             CustomElevatedButton(
               onPressed: () {
+                questionThreeController.previousSelected.value =
+                    questionThreeController.selectedDate.value;
                 Get.back();
               },
               text: "lbl_yes_right".tr,
@@ -61,6 +67,8 @@ class QuestionThreeDialog extends StatelessWidget {
             SizedBox(height: 22.v),
             GestureDetector(
               onTap: () {
+                questionThreeController.selectedDate.value =
+                    questionThreeController.previousSelected.value;
                 Get.back();
               },
               child: Text(

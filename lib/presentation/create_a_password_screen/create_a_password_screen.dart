@@ -145,11 +145,11 @@ class CreateAPasswordScreen extends GetWidget<SignUpController> {
                           maxHeight: 44.v,
                         ),
                         validator: (value) {
-                          if (value == null ||
-                              (!isValidPassword(value, isRequired: true))) {
-                            return "err_msg_please_enter_valid_password".tr;
-                          } else if (controller.newpasswordController.text
-                                  .trim() !=
+                          // if (value == null ||
+                          //     (!isValidPassword(value, isRequired: true))) {
+                          //   return "err_msg_please_enter_valid_password".tr;
+                          // } else
+                          if (controller.newpasswordController.text.trim() !=
                               controller.newpasswordController1.text.trim()) {
                             return "err_msg_password_not_match".tr;
                           }

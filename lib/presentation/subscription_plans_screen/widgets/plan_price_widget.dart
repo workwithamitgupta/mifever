@@ -123,7 +123,7 @@ class PlanPriceWidget extends StatelessWidget {
                               : Colors.white.withOpacity(0.4)),
                       value: controller.selectedPlanModel.value == planModel,
                       groupValue: true,
-                      onChanged: (val) {}),
+                      onChanged: null),
                 )
                 // Container(
                 //   height: 20.adaptSize,

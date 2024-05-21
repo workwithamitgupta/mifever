@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/presentation/liked_me_page/liked_me_page.dart';
+import 'package:mifever/presentation/matches/matches.dart';
 import 'package:mifever/presentation/my_likes_page/my_likes_page.dart';
 
 import '../../widgets/custom_bottom_bar.dart';
@@ -34,7 +35,7 @@ class LikeScreen extends GetWidget<LikeScreenController> {
                       children: [
                         LikedMePage(),
                         MyLikesPage(),
-                        //EmptyStateOnePage(),
+                        MatchesPage(),
                       ],
                     ),
                   ),
@@ -123,6 +124,36 @@ class LikeScreen extends GetWidget<LikeScreenController> {
                       fontFamily: 'Manrope',
                       fontWeight: FontWeight.w600,
                       color: controller.selectedIndex.value.isEqual(1)
+                          ? theme.colorScheme.primary
+                          : appTheme.gray60004,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: () {
+                  controller.selectedIndex.value = 2;
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(8.v),
+                  decoration: controller.selectedIndex.value.isEqual(2)
+                      ? BoxDecoration(
+                          color: appTheme.redA200,
+                          borderRadius: BorderRadius.circular(
+                            20.h,
+                          ),
+                        )
+                      : null,
+                  child: Text(
+                    "lbl_matches".tr,
+                    style: TextStyle(
+                      fontSize: 16.fSize,
+                      fontFamily: 'Manrope',
+                      fontWeight: FontWeight.w600,
+                      color: controller.selectedIndex.value.isEqual(2)
                           ? theme.colorScheme.primary
                           : appTheme.gray60004,
                     ),

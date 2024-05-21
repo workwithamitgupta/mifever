@@ -25,7 +25,7 @@ class AppDecoration {
         color: theme.colorScheme.primary,
       );
   static BoxDecoration get fillPrimary1 => BoxDecoration(
-        color: theme.colorScheme.primary.withOpacity(0.9),
+        color: theme.colorScheme.primary.withOpacity(1),
       );
   static BoxDecoration get fillPrimary2 => BoxDecoration(
         color: theme.colorScheme.primary.withOpacity(0.5),

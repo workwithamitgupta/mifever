@@ -8,11 +8,11 @@ class MyProfileOneModel {
   Rx<List<Frame7ItemModel>> frame7ItemList = Rx([
     Frame7ItemModel(
         id: PlanType.Gold.name.obs,
-        buyGoldPlanText: "Buy Gold Plan".obs,
-        loremIpsumDolorText: "Lorem ipsum dolor sit amet consectetur. ".obs),
+        buyGoldPlanText: "lbl_buy_gold_plan".tr.obs,
+        loremIpsumDolorText: "lbl_get_your_gold".tr.obs),
     Frame7ItemModel(
         id: PlanType.Platinum.name.obs,
-        buyGoldPlanText: "Buy Platinum Plan".obs,
-        loremIpsumDolorText: "Lorem ipsum dolor sit amet consectetur. ".obs)
+        buyGoldPlanText: "msg_buy_platinum_plan".tr.obs,
+        loremIpsumDolorText: "lbl_get_platinum_push".tr.obs)
   ]);
 }

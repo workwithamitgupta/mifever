@@ -7,7 +7,7 @@ import 'package:vibration/vibration.dart';
 class MatchScreenOneController extends GetxController {
   Rx<MatchScreenOneModel> matchScreenOneModelObj = MatchScreenOneModel().obs;
   late Timer _timer;
-  RxInt elapsedSeconds = 5.obs;
+  RxInt elapsedSeconds = 3.obs;
   void startTime() async {
     String receiverId = Get.arguments[0];
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -15,8 +15,7 @@ class MatchScreenOneController extends GetxController {
       if (elapsedSeconds.value == 0) {
         _timer.cancel();
         _triggerHapticFeedback();
-        Get.offAllNamed(AppRoutes.matchScreenTwoScreen,
-            arguments: [receiverId]);
+        Get.offNamed(AppRoutes.matchScreenTwoScreen, arguments: [receiverId]);
       }
     });
   }
@@ -29,9 +28,9 @@ class MatchScreenOneController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onReady() {
     startTime();
-    super.onInit();
+    super.onReady();
   }
 
   @override

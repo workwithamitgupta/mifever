@@ -10,7 +10,6 @@ class PrefUtils {
   static SharedPreferences? _sharedPreferences;
 
   PrefUtils() {
-    // init();
     SharedPreferences.getInstance().then((value) {
       _sharedPreferences = value;
     });
@@ -47,6 +46,14 @@ class PrefUtils {
     return _sharedPreferences?.getString('userName') ?? '';
   }
 
+  static Future<void> setUserEmail(String value) {
+    return _sharedPreferences!.setString('userEmail', value);
+  }
+
+  static String getUserEmail() {
+    return _sharedPreferences?.getString('userEmail') ?? '';
+  }
+
   static Future<void> setGender(String value) {
     return _sharedPreferences!.setString('gender', value);
   }
@@ -55,8 +62,32 @@ class PrefUtils {
     return _sharedPreferences?.getString('gender') ?? '';
   }
 
+  static Future<void> setCountry(String value) {
+    return _sharedPreferences!.setString('country', value);
+  }
+
+  static String getCountry() {
+    return _sharedPreferences?.getString('country') ?? '';
+  }
+
+  static Future<void> setCity(String value) {
+    return _sharedPreferences!.setString('city', value);
+  }
+
+  static String getCity() {
+    return _sharedPreferences?.getString('city') ?? '';
+  }
+
   static Future<void> saveFilter(PreferenceFilter filter) async {
     await _sharedPreferences?.setString('filter', jsonEncode(filter.toJson()));
+  }
+
+  static Future<void> setAvailableLocation(String value) {
+    return _sharedPreferences!.setString('availableLocation', value);
+  }
+
+  static String getAvailableLocation() {
+    return _sharedPreferences?.getString('availableLocation') ?? '';
   }
 
   static int getOtp() {
@@ -73,6 +104,30 @@ class PrefUtils {
 
   static String getLang() {
     return _sharedPreferences?.getString('lang') ?? 'en';
+  }
+
+  static Future<void> setIsNotificationON(bool value) {
+    return _sharedPreferences!.setBool('isNotificationOn', value);
+  }
+
+  static bool getIsNotificationON() {
+    return _sharedPreferences?.getBool('isNotificationOn') ?? true;
+  }
+
+  static Future<void> setIsCurrentLocation(bool value) {
+    return _sharedPreferences!.setBool('isCurrentLocation', value);
+  }
+
+  static bool getIsCurrentLocation() {
+    return _sharedPreferences?.getBool('isCurrentLocation') ?? true;
+  }
+
+  static Future<void> setIsSplash(bool value) {
+    return _sharedPreferences!.setBool('IsSplash', value);
+  }
+
+  static bool getIsSplash() {
+    return _sharedPreferences?.getBool('IsSplash') ?? true;
   }
 
   static Future<PreferenceFilter?> getFilter() async {

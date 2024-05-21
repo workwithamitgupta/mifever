@@ -54,28 +54,14 @@ class AboutMePage extends StatelessWidget {
             _user = UserModel.fromJson(data?.data() as Map<String, dynamic>);
             Rx<List<DescribeathingsItemModel>> describeathingsItemList = Rx([
               DescribeathingsItemModel(
-                  question: "Describe a Things You really like to do".obs,
-                  answer: _user.aboutMe?.thingsYouLike.obs,
-                  key: 'thingsYouLike'.obs),
-              DescribeathingsItemModel(
-                question: "Describe a Things I love about my culture".obs,
-                answer: _user.aboutMe?.aboutMyCulture.obs,
-                key: 'aboutMyCulture'.obs,
-              ),
-              DescribeathingsItemModel(
-                  question: "Describe What kind of person You are.".obs,
+                  question: "lbl_my_fav_location_in_home_country".tr.obs,
                   answer: _user.aboutMe?.whatKindPerson.obs,
                   key: 'whatKindPerson'.obs),
               DescribeathingsItemModel(
-                  question:
-                      "Describe your hobbies and activities that you like to participate in."
-                          .obs,
-                  answer: _user.aboutMe?.hobbiesAndActivity.obs,
-                  key: 'hobbiesAndActivity'.obs),
-              DescribeathingsItemModel(
-                  question: "Describe About you Favorite Location".obs,
-                  answer: _user.aboutMe?.favLocation.obs,
-                  key: 'favLocation'.obs)
+                question: "lbl_hobbies_and_activity".tr.obs,
+                answer: _user.aboutMe?.hobbiesAndActivity.obs,
+                key: 'hobbiesAndActivity'.obs,
+              ),
             ]);
 
             return Obx(
@@ -153,7 +139,10 @@ class AboutMePage extends StatelessWidget {
                   onPressed: () {
                     Get.to(() => AddAboutMeView(
                           aboutMe: aboutMe,
-                          text: describeathingsItemModelObj.answer?.value ?? '',
+                          question:
+                              describeathingsItemModelObj.question?.value ?? '',
+                          answer:
+                              describeathingsItemModelObj.answer?.value ?? '',
                           mapKey: describeathingsItemModelObj.key?.value ?? '',
                         ));
                   },
@@ -165,7 +154,10 @@ class AboutMePage extends StatelessWidget {
                   onPressed: () {
                     Get.to(() => AddAboutMeView(
                           aboutMe: aboutMe,
-                          text: describeathingsItemModelObj.answer?.value ?? '',
+                          question:
+                              describeathingsItemModelObj.question?.value ?? '',
+                          answer:
+                              describeathingsItemModelObj.answer?.value ?? '',
                           mapKey: describeathingsItemModelObj.key?.value ?? '',
                         ));
                   },

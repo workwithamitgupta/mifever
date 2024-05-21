@@ -29,6 +29,10 @@ class LanguageOptionsWidget extends StatelessWidget {
             languageOptionsWidgetModelObj,
           )
               ? AppDecoration.outlineRedA.copyWith(
+                  border: Border.all(
+                    color: appTheme.redA200,
+                    width: 3.h,
+                  ),
                   borderRadius: BorderRadiusStyle.roundedBorder4,
                 )
               : BoxDecoration(
@@ -61,8 +65,7 @@ class LanguageOptionsWidget extends StatelessWidget {
                         height: 20.adaptSize,
                         width: 20.adaptSize,
                       )
-                    : Radio(
-                        value: false, groupValue: true, onChanged: (val) {}),
+                    : Radio(value: false, groupValue: true, onChanged: null),
               ),
             ],
           ),

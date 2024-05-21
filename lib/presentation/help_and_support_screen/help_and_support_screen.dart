@@ -1,62 +1,206 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mifever/core/app_export.dart';
+import 'package:mifever/core/utils/progress_dialog_utils.dart';
+import 'package:mifever/data/sevices/firebase_services.dart';
+import 'package:mifever/presentation/help_and_support_screen/models/help_and_support_screen_model.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
 import 'package:mifever/widgets/app_bar/appbar_subtitle.dart';
 import 'package:mifever/widgets/app_bar/custom_app_bar.dart';
 
+import '../../widgets/custom_drop_down.dart';
+import '../../widgets/custom_elevated_button.dart';
+import '../../widgets/custom_text_form_field.dart';
 import 'controller/help_and_support_controller.dart';
 
 // ignore_for_file: must_be_immutable
 class HelpAndSupportScreen extends GetWidget<HelpAndSupportController> {
-  const HelpAndSupportScreen({Key? key}) : super(key: key);
+  HelpAndSupportScreen({Key? key}) : super(key: key);
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    List<SelectionPopupModel> reasonList = [
+      SelectionPopupModel(title: 'Account Issues', value: 'Account Issues'),
+      SelectionPopupModel(
+          title: 'Profile Assistance', value: 'Profile Assistance'),
+      SelectionPopupModel(title: 'Privacy Concerns', value: 'Privacy Concerns'),
+      SelectionPopupModel(title: 'Messaging', value: 'Messaging'),
+      SelectionPopupModel(
+          title: 'Subscription and Payments',
+          value: 'Subscription and Payments'),
+      SelectionPopupModel(
+          title: 'Technical Problems', value: 'Technical Problems'),
+      SelectionPopupModel(
+          title: 'Safety and Security', value: 'Safety and Security'),
+      SelectionPopupModel(
+          title: 'Features and Functionality',
+          value: 'Features and Functionality'),
+      SelectionPopupModel(
+          title: 'Community Guidelines', value: 'Community Guidelines'),
+      SelectionPopupModel(
+          title: 'Feedback and Suggestions', value: 'Feedback and Suggestions'),
+      SelectionPopupModel(title: 'Other', value: 'Other'),
+    ];
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildAppBar(),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 20.h,
-                  vertical: 24.v,
-                ),
-                child: Column(
-                    children: List.generate(
-                  5,
-                  (index) => Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(
-                            color: appTheme.gray200,
-                          ),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: ExpansionTile(
-                        iconColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            side: BorderSide(color: appTheme.redA200)),
-                        title: Text(
-                          '${index + 1}.  ' + 'msg_lorem_ipsum_dolor10'.tr,
-                          style: theme.textTheme.titleSmall!
-                              .copyWith(fontSize: 14),
-                        ),
-                        children: [
-                          _buildFrame1(),
-                        ],
-                      ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _buildAppBar(),
+                SizedBox(height: 8.v),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: CustomDropDown(
+                    hintText: controller.selectedReason.value.title,
+                    items: reasonList,
+                    prefix: Container(
+                        margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
+                        child: Text('')),
+                    prefixConstraints: BoxConstraints(
+                      maxHeight: 44.v,
                     ),
+                    onChanged: (value) {
+                      controller.selectedReason.value = value;
+                      print(controller.selectedReason.value.title);
+                      //controller.onSelected1(value);
+                    },
                   ),
-                )),
-              ),
-            ],
+                ),
+                Padding(
+                  padding: EdgeInsets.all(12.0.h),
+                  child: CustomTextFormField(
+                    controller: controller.helpController,
+                    hintText: 'lbl_enter_text_here'.tr,
+                    //"msg_lorem_ipsum_dolor".tr,
+                    hintStyle: CustomTextStyles.bodyMediumGray900,
+                    textInputAction: TextInputAction.done,
+                    maxLines: 8,
+                    contentPadding: EdgeInsets.all(12.h),
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return 'err_msg_please_enter_valid_text'.tr;
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+                // Padding(
+                //   padding: EdgeInsets.all(8.0.h),
+                //   child: CustomTextFormField(
+                //     controller: controller.helpController,
+                //     hintText: "msg_enter_email_address".tr,
+                //     hintStyle: CustomTextStyles.bodySmall12,
+                //     textInputType: TextInputType.emailAddress,
+                //     prefix: Container(
+                //       margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
+                //       child: CustomImageView(
+                //         imagePath: ImageConstant.imgMail02RedA200,
+                //         height: 20.adaptSize,
+                //         width: 20.adaptSize,
+                //       ),
+                //     ),
+                //     prefixConstraints: BoxConstraints(
+                //       maxHeight: 44.v,
+                //     ),
+                //     validator: (value) {
+                //       if (value == null ||
+                //           (!isValidEmail(value, isRequired: true))) {
+                //         return "err_msg_please_enter_valid_email".tr;
+                //       }
+                //       return null;
+                //     },
+                //     onChanged: (val) {
+                //       if (controller.helpController.text.isEmpty) {
+                //         // controller.isButtonDisable.value = true;
+                //       } else {
+                //         //controller.isButtonDisable.value = false;
+                //       }
+                //     },
+                //   ),
+                // ),
+
+                SizedBox(height: 24.v),
+
+                // Container(
+                //   padding: EdgeInsets.symmetric(
+                //     horizontal: 20.h,
+                //     vertical: 24.v,
+                //   ),
+                //   child: Column(
+                //       children: List.generate(
+                //     5,
+                //     (index) => Padding(
+                //       padding: EdgeInsets.only(bottom: 10.h),
+                //       child: Container(
+                //         decoration: BoxDecoration(
+                //             border: Border.all(
+                //               color: appTheme.gray200,
+                //             ),
+                //             borderRadius: BorderRadius.circular(10)),
+                //         child: ExpansionTile(
+                //           iconColor: Colors.black,
+                //           shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(5),
+                //               side: BorderSide(color: appTheme.redA200)),
+                //           title: Text(
+                //             '${index + 1}.  ' + 'msg_lorem_ipsum_dolor10'.tr,
+                //             style: theme.textTheme.titleSmall!
+                //                 .copyWith(fontSize: 14),
+                //           ),
+                //           children: [
+                //             _buildFrame1(),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   )),
+                // ),
+              ],
+            ),
           ),
+        ),
+        bottomSheet: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.h, vertical: 20.v),
+          child: CustomElevatedButton(
+              text: "lbl_continue".tr,
+              rightIcon: Container(
+                margin: EdgeInsets.only(left: 4.h),
+                child: CustomImageView(
+                  imagePath: ImageConstant.imgArrowleft02sharp,
+                  height: 24.adaptSize,
+                  width: 24.adaptSize,
+                ),
+              ),
+              buttonStyle: null,
+              onPressed: _onTapContinue
+              //controller.isButtonDisable.value ? null : _onTapContinue,
+              ),
         ),
       ),
     );
+  }
+
+  _onTapContinue() async {
+    bool isValid = _formKey.currentState!.validate();
+    if (!isValid) {
+      return;
+    } else {
+      ProgressDialogUtils.showProgressDialog();
+      HelpAndSupportModel model = HelpAndSupportModel(
+        userId: PrefUtils.getId(),
+        email: controller.helpController.text,
+        reason: controller.selectedReason.value.title,
+        status: '',
+      );
+      await FirebaseServices.addHelAndSupport(model);
+      controller.helpController.clear();
+      ProgressDialogUtils.hideProgressDialog();
+      Fluttertoast.showToast(msg: 'We will get back to you soon.');
+      Get.back();
+    }
   }
 
   /// Section Widget

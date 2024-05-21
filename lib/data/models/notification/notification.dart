@@ -30,4 +30,10 @@ class NotificationModel {
       };
 }
 
-enum NotificationType { Like, View, Chat, DisLike }
+enum NotificationType {
+  Like,
+  View,
+  Chat,
+  DisLike,
+  Match,
+}

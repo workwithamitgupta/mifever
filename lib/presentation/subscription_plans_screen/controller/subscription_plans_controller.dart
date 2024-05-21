@@ -15,7 +15,7 @@ class SubscriptionPlansController extends GetxController
     tabViewController = Get.put(TabController(vsync: this, length: 2));
     tabViewController.addListener(() {
       selectedIndex.value = tabViewController.index;
-      print('Selected Index: $selectedIndex');
+      selectedPlanModel.value = PlansModel();
     });
     super.onInit();
   }

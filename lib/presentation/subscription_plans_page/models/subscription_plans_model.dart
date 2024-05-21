@@ -43,12 +43,12 @@ class SubscriptionPlansModel {
     PlansModel(
         id: PlanType.Platinum.name.obs,
         amount: " \$20".obs,
-        duration: "3 months".obs,
+        duration: "3 Months".obs,
         savings: "20% Save".obs),
     PlansModel(
         id: PlanType.Platinum.name.obs,
         amount: " \$30".obs,
-        duration: "6 months".obs,
+        duration: "6 Months".obs,
         savings: "30% Save".obs),
     PlansModel(
         id: PlanType.Platinum.name.obs,
@@ -66,17 +66,39 @@ class SubscriptionPlansModel {
     PlansModel(
         id: PlanType.Gold.name.obs,
         amount: " \$20".obs,
-        duration: "3 months".obs,
+        duration: "3 Months".obs,
         savings: "20% Save".obs),
     PlansModel(
         id: PlanType.Gold.name.obs,
         amount: " \$30".obs,
-        duration: "6 months".obs,
+        duration: "6 Months".obs,
         savings: "30% Save".obs),
     PlansModel(
         id: PlanType.Gold.name.obs,
         amount: " \$50".obs,
         duration: "1 Year".obs,
+        savings: "40% Save".obs)
+  ]);
+  Rx<List<PlansModel>> plansListTexTries = Rx([
+    PlansModel(
+        id: PlanType.TextTries.name.obs,
+        amount: " \$10".obs,
+        duration: "25 Chances".obs,
+        savings: "20% Save".obs),
+    PlansModel(
+        id: PlanType.TextTries.name.obs,
+        amount: " \$20".obs,
+        duration: "55 Chances".obs,
+        savings: "20% Save".obs),
+    PlansModel(
+        id: PlanType.TextTries.name.obs,
+        amount: " \$30".obs,
+        duration: "85 Chances".obs,
+        savings: "30% Save".obs),
+    PlansModel(
+        id: PlanType.TextTries.name.obs,
+        amount: " \$50".obs,
+        duration: "125 Chances".obs,
         savings: "40% Save".obs)
   ]);
 }
@@ -90,7 +112,7 @@ class PlansModel {
     this.id,
   }) {
     amount = amount ?? Rx(" 20");
-    duration = duration ?? Rx("3 months");
+    duration = duration ?? Rx("3 Months");
     savings = savings ?? Rx("20% Save");
     id = id ?? Rx("");
   }
@@ -106,7 +128,7 @@ class PlansModel {
   factory PlansModel.fromJson(Map<String, dynamic> json) {
     return PlansModel(
       amount: Rx<String>(json['amount'] ?? " 20"),
-      duration: Rx<String>(json['duration'] ?? "3 months"),
+      duration: Rx<String>(json['duration'] ?? "3 Months"),
       savings: Rx<String>(json['savings'] ?? "20% Save"),
       id: Rx<String>(json['id'] ?? ""),
     );
@@ -115,7 +137,7 @@ class PlansModel {
   Map<String, dynamic> toJson() {
     return {
       'amount': amount?.value ?? " 20",
-      'duration': duration?.value ?? "3 months",
+      'duration': duration?.value ?? "3 Months",
       'savings': savings?.value ?? "20% Save",
       'id': id?.value ?? "",
     };

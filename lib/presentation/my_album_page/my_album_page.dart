@@ -13,9 +13,7 @@ import 'widgets/album_widget.dart';
 
 class MyAlbumPage extends StatelessWidget {
   MyAlbumPage({Key? key}) : super(key: key);
-
   MyAlbumController controller = Get.put(MyAlbumController());
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -81,27 +79,38 @@ class MyAlbumPage extends StatelessWidget {
             itemBuilder: (context, index) {
               if (index < _user.wayAlbum!.length) {
                 return AlbumWidget(
+                  index: index,
                   url: _user.wayAlbum![index],
+                  onDelete: () async {
+                    var list = _user.lifeAlbum;
+                    list!.removeAt(index);
+                    FirebaseServices.editWayAlbum(list);
+                    ProgressDialogUtils.hideProgressDialog();
+                  },
                   onEdit: () async {
                     var list = _user.lifeAlbum;
                     String imagePath =
                         await MediaServices.pickImageFromGallery();
-                    ProgressDialogUtils.showProgressDialog();
-                    String url = await FirebaseServices.uploadFile(
-                        filePath: imagePath, contentType: '.jpg');
-                    list![index] = url;
-                    FirebaseServices.editWayAlbum(list);
-                    ProgressDialogUtils.hideProgressDialog();
+                    if (imagePath.isNotEmpty) {
+                      ProgressDialogUtils.showProgressDialog();
+                      String url = await FirebaseServices.uploadFile(
+                          filePath: imagePath, contentType: '.jpg');
+                      list![index] = url;
+                      FirebaseServices.editWayAlbum(list);
+                      ProgressDialogUtils.hideProgressDialog();
+                    }
                   },
                 );
               }
               return _buildAddImageView(() async {
                 String imagePath = await MediaServices.pickImageFromGallery();
-                ProgressDialogUtils.showProgressDialog();
-                String url = await FirebaseServices.uploadFile(
-                    filePath: imagePath, contentType: '.jpg');
-                FirebaseServices.addWayAlbum(url);
-                ProgressDialogUtils.hideProgressDialog();
+                if (imagePath.isNotEmpty) {
+                  ProgressDialogUtils.showProgressDialog();
+                  String url = await FirebaseServices.uploadFile(
+                      filePath: imagePath, contentType: '.jpg');
+                  FirebaseServices.addWayAlbum(url);
+                  ProgressDialogUtils.hideProgressDialog();
+                }
               });
             },
           );
@@ -132,27 +141,38 @@ class MyAlbumPage extends StatelessWidget {
             itemBuilder: (context, index) {
               if (index < _user.lifeAlbum!.length) {
                 return AlbumWidget(
+                  index: index,
                   url: _user.lifeAlbum![index],
+                  onDelete: () async {
+                    var list = _user.lifeAlbum;
+                    list!.removeAt(index);
+                    FirebaseServices.editWayAlbum(list);
+                    ProgressDialogUtils.hideProgressDialog();
+                  },
                   onEdit: () async {
                     var list = _user.lifeAlbum;
                     String imagePath =
                         await MediaServices.pickImageFromGallery();
-                    ProgressDialogUtils.showProgressDialog();
-                    String url = await FirebaseServices.uploadFile(
-                        filePath: imagePath, contentType: '.jpg');
-                    list![index] = url;
-                    FirebaseServices.editLifeAlbum(list);
-                    ProgressDialogUtils.hideProgressDialog();
+                    if (imagePath.isNotEmpty) {
+                      ProgressDialogUtils.showProgressDialog();
+                      String url = await FirebaseServices.uploadFile(
+                          filePath: imagePath, contentType: '.jpg');
+                      list![index] = url;
+                      FirebaseServices.editLifeAlbum(list);
+                      ProgressDialogUtils.hideProgressDialog();
+                    }
                   },
                 );
               }
               return _buildAddImageView(() async {
                 String imagePath = await MediaServices.pickImageFromGallery();
-                ProgressDialogUtils.showProgressDialog();
-                String url = await FirebaseServices.uploadFile(
-                    filePath: imagePath, contentType: '.jpg');
-                FirebaseServices.addLifeAlbum(url);
-                ProgressDialogUtils.hideProgressDialog();
+                if (imagePath.isNotEmpty) {
+                  ProgressDialogUtils.showProgressDialog();
+                  String url = await FirebaseServices.uploadFile(
+                      filePath: imagePath, contentType: '.jpg');
+                  FirebaseServices.addLifeAlbum(url);
+                  ProgressDialogUtils.hideProgressDialog();
+                }
               });
             },
           );

@@ -81,7 +81,9 @@ class TextMessageWidget extends StatelessWidget {
                   .removeWhere((element) => element.id == chat.dcoId);
             } else {
               final translator = GoogleTranslator();
-              translator.translate(chat.message ?? '', to: 'pt').then((s) {
+              translator
+                  .translate(chat.message ?? '', to: PrefUtils.getLang())
+                  .then((s) {
                 controller.translationList
                     .add(TranslationModel(id: chat.dcoId!, text: s.text));
                 controller.translationList.length;
@@ -93,8 +95,8 @@ class TextMessageWidget extends StatelessWidget {
               controller.translationList.firstWhereOrNull(
                           (element) => element.id == chat.dcoId) !=
                       null
-                  ? 'lbl_see_translation'.tr
-                  : "msg_text_translated".tr,
+                  ? "msg_text_translated".tr
+                  : "lbl_see_translation".tr,
               style: CustomTextStyles.labelMediumRedA200,
             ),
           ),

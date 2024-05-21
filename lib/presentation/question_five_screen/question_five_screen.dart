@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
@@ -5,6 +6,7 @@ import 'package:mifever/widgets/app_bar/custom_app_bar.dart';
 import 'package:mifever/widgets/custom_elevated_button.dart';
 import 'package:mifever/widgets/custom_text_form_field.dart';
 
+import '../../data/sevices/google_places_services.dart';
 import 'controller/question_five_controller.dart';
 
 // ignore_for_file: must_be_immutable
@@ -56,18 +58,18 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
                   ),
                   SizedBox(height: 21.v),
                   Text(
-                    "lbl_country".tr,
+                    "lbl_location".tr,
                     style: CustomTextStyles.titleSmallGray60002,
                   ),
                   SizedBox(height: 6.v),
-                  _buildCountryEditText(),
-                  SizedBox(height: 21.v),
-                  Text(
-                    "lbl_city".tr,
-                    style: CustomTextStyles.titleSmallGray60002,
-                  ),
-                  SizedBox(height: 6.v),
-                  _buildCityEditText(),
+                  _buildLocationField(controller.locationTextController),
+                  // SizedBox(height: 21.v),
+                  // Text(
+                  //   "lbl_city".tr,
+                  //   style: CustomTextStyles.titleSmallGray60002,
+                  // ),
+                  // SizedBox(height: 6.v),
+                  // _buildCityEditText(),
                   SizedBox(height: 51.v),
                   Text(
                     "msg_add_your_other_available".tr,
@@ -79,23 +81,17 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
                       spacing: 12.v,
                       runSpacing: 10.v,
                       children: List.generate(
-                          controller.locationLength.value,
+                          controller.locationList.length,
                           (index) => index.isEqual(0)
                               ? Text('')
                               : _buildMadridEurope(
                                   text: controller
-                                          .locationControllerCountry[index - 1]
-                                          .text +
-                                      ", " +
-                                      controller
-                                          .locationControllerCity[index - 1]
-                                          .text,
+                                      .locationList[index - 1].locationName,
                                   onCancel: () {
-                                    controller.locationLength.value--;
-                                    controller.locationControllerCity
-                                        .removeAt(index - 1);
-                                    controller.locationControllerCountry
-                                        .removeAt(index - 1);
+                                    //controller.locationLength.value--;
+                                    // controller.availableLocationTextController
+                                    //     .removeAt(index - 1);
+                                    controller.locationList.removeAt(index - 1);
                                   })),
                     ),
                   ),
@@ -103,25 +99,40 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
                   Obx(
                     () => Column(
                       children: List.generate(
-                        controller.locationLength.value,
+                        controller.locationList.length,
                         (index) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "lbl_country".tr,
+                              "lbl_location".tr,
                               style: CustomTextStyles.titleSmallGray60002,
                             ),
                             SizedBox(height: 6.v),
-                            _buildCountryEditText2(
-                                controller.locationControllerCountry[index]),
-                            SizedBox(height: 21.v),
-                            Text(
-                              "lbl_city".tr,
-                              style: CustomTextStyles.titleSmallGray60002,
-                            ),
-                            SizedBox(height: 6.v),
-                            _buildCityEditText2(
-                                controller.locationControllerCity[index]),
+                            _buildAvailableLocation(
+                                text:
+                                    controller.locationList[index].locationName,
+                                // controller
+                                //     .availableLocationTextController[index],
+                                onTap: () async {
+                                  await GooglePlacesApiServices.placeSelectAPI(
+                                          Get.context!,
+                                          controller
+                                              .locationList[index].locationName)
+                                      .then((value) {
+                                    controller.locationList[index] =
+                                        LocationModel(
+                                            name: 'Location${index + 1}',
+                                            latLng: GeoPoint(
+                                                value!.result.geometry!.location
+                                                    .lat,
+                                                value.result.geometry!.location
+                                                    .lng),
+                                            locationName: value
+                                                .result.formattedAddress
+                                                .toString());
+                                    controller.isMakeButtonDisable();
+                                  });
+                                }),
                             SizedBox(height: 21.v),
                           ],
                         ),
@@ -131,12 +142,13 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
                   SizedBox(height: 25.v),
                   InkWell(
                     onTap: () {
-                      controller.locationLength.value++;
-                      controller.locationControllerCity
-                          .add(TextEditingController());
-                      controller.locationControllerCountry
-                          .add(TextEditingController());
-                      controller.isMakeButtonDisable();
+                      if (!controller.isButtonDisable.value) {
+                        controller.locationList.add(LocationModel(
+                            name: 'Location'.tr,
+                            latLng: GeoPoint(0.0, 0.0),
+                            locationName: 'lbl_enter_location'.tr));
+                        controller.isMakeButtonDisable();
+                      }
                     },
                     child: Obx(
                       () => Text(
@@ -175,15 +187,20 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
   Widget _buildMadridEurope(
       {required String text, required VoidCallback onCancel}) {
     return Container(
+      constraints: BoxConstraints(maxWidth: 150.v),
       padding: EdgeInsets.symmetric(horizontal: 15.v, vertical: 8.v),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20), color: appTheme.redA200),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            text,
-            style: TextStyle(color: Colors.white),
+          SizedBox(
+            width: 100.v,
+            child: Text(
+              text,
+              style: TextStyle(color: Colors.white),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           SizedBox(width: 2.v),
           CustomImageView(
@@ -198,10 +215,11 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
   }
 
   /// Section Widget
-  Widget _buildCountryEditText() {
+  Widget _buildLocationField(TextEditingController textEditingController) {
     return CustomTextFormField(
-      controller: controller.countryEditTextController,
-      hintText: "msg_select_your_country".tr,
+      readOnly: true,
+      controller: textEditingController,
+      hintText: "lbl_enter_location".tr,
       hintStyle: CustomTextStyles.bodySmall12,
       prefix: Container(
         margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
@@ -217,103 +235,47 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
       textInputType: TextInputType.name,
       validator: (value) {
         if (value!.trim().isEmpty) {
-          return "msg_select_your_country".tr;
+          return "lbl_enter_location".tr;
         }
         return null;
       },
-      onChanged: (val) {},
-    );
-  }
-
-  /// Section Widget
-  Widget _buildCityEditText() {
-    return CustomTextFormField(
-      controller: controller.cityEditTextController,
-      hintText: "msg_select_your_city".tr,
-      hintStyle: CustomTextStyles.bodySmall12,
-      prefix: Container(
-        margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
-        child: CustomImageView(
-          imagePath: ImageConstant.imgLocation01RedA200,
-          height: 20.adaptSize,
-          width: 20.adaptSize,
-        ),
-      ),
-      prefixConstraints: BoxConstraints(
-        maxHeight: 44.v,
-      ),
-      textInputType: TextInputType.name,
-      validator: (value) {
-        if (value!.trim().isEmpty) {
-          return "msg_select_your_city".tr;
-        }
-        return null;
-      },
-      onChanged: (val) {
-        controller.isMakeButtonDisable();
+      onTap: () async {
+        await GooglePlacesApiServices.placeSelectAPI(
+                Get.context!, textEditingController.text)
+            .then((value) {
+          textEditingController.text =
+              value!.result.formattedAddress.toString();
+          controller.isMakeButtonDisable();
+          controller.locationLatLong.value = GeoPoint(
+            value.result.geometry!.location.lat,
+            value.result.geometry!.location.lng,
+          );
+        });
       },
     );
   }
 
-  /// Section Widget
-  Widget _buildCountryEditText2(TextEditingController textEditingController) {
+  Widget _buildAvailableLocation(
+      {required String text, required VoidCallback onTap}) {
     return CustomTextFormField(
-      controller: textEditingController,
-      hintText: "msg_select_your_country".tr,
-      hintStyle: CustomTextStyles.bodySmall12,
-      prefix: Container(
-        margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
-        child: CustomImageView(
-          imagePath: ImageConstant.imgLocation01RedA200,
-          height: 20.adaptSize,
-          width: 20.adaptSize,
+        readOnly: true,
+        hintText: text,
+        hintStyle: text == "lbl_enter_location".tr
+            ? CustomTextStyles.bodySmall12
+            : theme.textTheme.titleSmall,
+        prefix: Container(
+          margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
+          child: CustomImageView(
+            imagePath: ImageConstant.imgLocation01,
+            height: 20.adaptSize,
+            width: 20.adaptSize,
+          ),
         ),
-      ),
-      prefixConstraints: BoxConstraints(
-        maxHeight: 44.v,
-      ),
-      textInputType: TextInputType.name,
-      validator: (value) {
-        if (value!.trim().isEmpty) {
-          return "msg_select_your_country".tr;
-        }
-        return null;
-      },
-      onChanged: (val) {
-        controller.isMakeButtonDisable();
-      },
-    );
-  }
-
-  /// Section Widget
-  Widget _buildCityEditText2(TextEditingController textEditingController) {
-    return CustomTextFormField(
-      controller: textEditingController,
-      hintText: "msg_select_your_city".tr,
-      hintStyle: CustomTextStyles.bodySmall12,
-      textInputAction: TextInputAction.done,
-      prefix: Container(
-        margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
-        child: CustomImageView(
-          imagePath: ImageConstant.imgLocation01RedA200,
-          height: 20.adaptSize,
-          width: 20.adaptSize,
+        prefixConstraints: BoxConstraints(
+          maxHeight: 44.v,
         ),
-      ),
-      prefixConstraints: BoxConstraints(
-        maxHeight: 44.v,
-      ),
-      textInputType: TextInputType.name,
-      validator: (value) {
-        if (value!.trim().isEmpty) {
-          return "msg_select_your_city".tr;
-        }
-        return null;
-      },
-      onChanged: (val) {
-        controller.isMakeButtonDisable();
-      },
-    );
+        textInputType: TextInputType.name,
+        onTap: onTap);
   }
 
   /// Section Widget
@@ -348,6 +310,12 @@ class QuestionFiveScreen extends GetWidget<QuestionFiveController> {
     if (!isValid) {
       return;
     } else {
+      // print(controller.locationList);
+      // for (var location in controller.locationList) {
+      //   print('Name: ${location.name}');
+      //   print('Name: ${location.latLng.latitude}');
+      //   print('Name: ${location.locationName}');
+      // }
       Get.toNamed(AppRoutes.questionSixScreen);
     }
   }

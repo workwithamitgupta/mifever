@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mifever/data/models/user/about_me_model.dart';
+import 'package:mifever/data/models/user/adiition_details.dart';
+
+import '../../../presentation/question_five_screen/controller/question_five_controller.dart';
 
 class UserModel {
   final String? id;
@@ -9,10 +12,6 @@ class UserModel {
   final String? gender;
   final String? dob;
   final List<dynamic>? interestList;
-  final String? country;
-  final String? city;
-  final List<dynamic>? availableCountry;
-  final List<dynamic>? availableCity;
   final String? whatDoYouWant;
   final List<dynamic>? wayAlbum;
   final List<dynamic>? lifeAlbum;
@@ -20,9 +19,19 @@ class UserModel {
   final bool? isProfileComplete;
   final AboutMe? aboutMe;
   final GeoPoint? location;
+  final GeoPoint? currentLocationLatLng;
   final Timestamp? lasOnline;
   final String? profileImage;
-
+  final List<LocationModel>? availableLocation;
+  final String? locationText;
+  final bool? isApproved;
+  final bool? isNotificationOn;
+  final String? timestamp;
+  final String? planName;
+  final int? audioDuration;
+  final AdditionalPersonalInfo? additionalPersonalInfo;
+  final bool? isCurrentLocation;
+  final bool? isAccountDeleted;
   UserModel({
     this.id,
     this.email,
@@ -31,10 +40,6 @@ class UserModel {
     this.gender,
     this.dob,
     this.interestList,
-    this.country,
-    this.city,
-    this.availableCountry,
-    this.availableCity,
     this.whatDoYouWant,
     this.wayAlbum,
     this.lifeAlbum,
@@ -42,8 +47,19 @@ class UserModel {
     this.token,
     this.aboutMe,
     this.location,
+    this.currentLocationLatLng,
     this.lasOnline,
     this.profileImage,
+    this.availableLocation,
+    this.locationText,
+    this.isApproved,
+    this.isNotificationOn,
+    this.timestamp,
+    this.planName,
+    this.additionalPersonalInfo,
+    this.audioDuration,
+    this.isCurrentLocation,
+    this.isAccountDeleted,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -55,10 +71,6 @@ class UserModel {
       gender: json['gender'] ?? '',
       dob: json['dob'] ?? '',
       interestList: json['interestList'] ?? [],
-      country: json['country'] ?? '',
-      city: json['city'] ?? '',
-      availableCountry: json['availableCountry'] ?? [],
-      availableCity: json['availableCity'] ?? [],
       whatDoYouWant: json['whatDoYouWant'] ?? '',
       wayAlbum: json['wayAlbum'] ?? [],
       lifeAlbum: json['lifeAlbum'] ?? [],
@@ -67,8 +79,24 @@ class UserModel {
       aboutMe:
           json['aboutMe'] != null ? AboutMe.fromJson(json['aboutMe']) : null,
       location: json['location'] ?? GeoPoint(0.0, 0.0),
+      currentLocationLatLng:
+          json['currentLocationLatLng'] ?? GeoPoint(0.0, 0.0),
       lasOnline: json['lasOnline'] ?? Timestamp(0, 0),
       profileImage: json['profileImage'] ?? '',
+      availableLocation: (json['availableLocation'] as List<dynamic>?)
+          ?.map((item) => LocationModel.fromJson(item))
+          .toList(),
+      locationText: json['locationText'] ?? '',
+      isApproved: json['isApproved'] ?? true,
+      isNotificationOn: json['isNotificationOn'] ?? true,
+      timestamp: json['timestamp'] ?? DateTime.now().toUtc().toString(),
+      planName: json['planName'] ?? "",
+      audioDuration: json['audioDuration'] ?? 3,
+      isCurrentLocation: json['isCurrentLocation'] ?? false,
+      additionalPersonalInfo: json['additionalPersonalInfo'] != null
+          ? AdditionalPersonalInfo.fromJson(json['additionalPersonalInfo'])
+          : AdditionalPersonalInfo(),
+      isAccountDeleted: json['isAccountDeleted'] ?? false,
     );
   }
 
@@ -84,11 +112,6 @@ class UserModel {
     if (gender != null) jsonMap['gender'] = gender;
     if (dob != null) jsonMap['dob'] = dob;
     if (interestList != null) jsonMap['interestList'] = interestList;
-    if (country != null) jsonMap['country'] = country;
-    if (city != null) jsonMap['city'] = city;
-    if (availableCountry != null)
-      jsonMap['availableCountry'] = availableCountry;
-    if (availableCity != null) jsonMap['availableCity'] = availableCity;
     if (whatDoYouWant != null) jsonMap['whatDoYouWant'] = whatDoYouWant;
     if (wayAlbum != null) jsonMap['wayAlbum'] = wayAlbum;
     if (lifeAlbum != null) jsonMap['lifeAlbum'] = lifeAlbum;
@@ -97,9 +120,29 @@ class UserModel {
       jsonMap['isProfileComplete'] = isProfileComplete;
     if (aboutMe != null) jsonMap['aboutMe'] = aboutMe?.toJson();
     if (location != null) jsonMap['location'] = location;
+    if (currentLocationLatLng != null)
+      jsonMap['currentLocationLatLng'] = currentLocationLatLng;
     if (lasOnline != null) jsonMap['lasOnline'] = lasOnline;
     if (profileImage != null) jsonMap['profileImage'] = profileImage;
+    if (availableLocation != null)
+      jsonMap['availableLocation'] =
+          availableLocation?.map((item) => item.toJson()).toList();
+    if (locationText != null) jsonMap['locationText'] = locationText;
+    if (isApproved != null) jsonMap['isApproved'] = isApproved;
+    if (isNotificationOn != null)
+      jsonMap['isNotificationOn'] = isNotificationOn;
+    if (timestamp != null) jsonMap['timestamp'] = timestamp;
+    if (planName != null) jsonMap['planName'] = planName;
+    if (audioDuration != null) jsonMap['audioDuration'] = audioDuration;
 
+    if (additionalPersonalInfo != null)
+      jsonMap['additionalPersonalInfo'] = additionalPersonalInfo!.toJson();
+    if (isCurrentLocation != null) {
+      jsonMap['isCurrentLocation'] = isCurrentLocation;
+    }
+    if (isAccountDeleted != null) {
+      jsonMap['isAccountDeleted'] = isAccountDeleted;
+    }
     return jsonMap;
   }
 }

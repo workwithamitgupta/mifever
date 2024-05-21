@@ -14,11 +14,8 @@ import 'package:skeletons/skeletons.dart';
 
 import '../../widgets/app_bar/appbar_leading_image.dart';
 import '../../widgets/app_bar/appbar_subtitle_one.dart';
-import '../../widgets/custom_elevated_button.dart';
-import '../../widgets/custom_outlined_button.dart';
 import '../chat_screen/controller/chat_controller.dart';
 import '../chat_screen/models/chat_model.dart';
-import '../upgrade_plan_dialogue/upgrage_plan_dialogue.dart';
 import 'controller/my_chats_one_controller.dart';
 import 'models/my_chats_one_model.dart';
 import 'models/userprofile1_item_model.dart';
@@ -30,6 +27,7 @@ class MyChatsOnePage extends StatelessWidget {
       Get.put(MyChatsOneController(MyChatsOneModel().obs));
   @override
   Widget build(BuildContext context) {
+    controller.clearSearchBar();
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async {
@@ -38,18 +36,20 @@ class MyChatsOnePage extends StatelessWidget {
         child: Scaffold(
           appBar: _buildAppBar(),
           body: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseServices.getMatchUser(),
+              stream: FirebaseServices.getNotDeletedUser(),
               builder: (context, matchSnapshot) {
                 if (matchSnapshot.connectionState == ConnectionState.waiting) {
                   return SkeletonListView();
                 }
-                var _matchedData = matchSnapshot.data!.docs;
+                var _matchedData = matchSnapshot.data?.docs ?? [];
                 List<LikeModel> _matchedUser = <LikeModel>[];
                 _matchedUser.clear();
                 _matchedUser = _matchedData
                     .map((e) =>
                         LikeModel.fromJson(e.data() as Map<String, dynamic>))
                     .toList();
+                _matchedUser.sort(
+                    (a, b) => b.chatTimeStamp!.compareTo(a.chatTimeStamp!));
                 Set<dynamic> combinedSet = {};
                 for (var x in _matchedUser) {
                   combinedSet.addAll(x.userIds!);
@@ -59,6 +59,7 @@ class MyChatsOnePage extends StatelessWidget {
                 return combinedList.isEmpty
                     ? _noUsers()
                     : ListView.builder(
+                        shrinkWrap: true,
                         itemCount: combinedList.length,
                         itemBuilder: (context, userIndex) {
                           return Container(
@@ -94,33 +95,31 @@ class MyChatsOnePage extends StatelessWidget {
                                           () => Visibility(
                                             visible: controller.isVisible(
                                                 _user.name.toString()),
-                                            child: Userprofile1ItemWidget(
-                                                Userprofile1ItemModel(
-                                                    id: _user.id.toString().obs,
-                                                    userImage:
-                                                        _user.lifeAlbum?[0]
+                                            child: Userprofile1ItemWidget(Userprofile1ItemModel(
+                                                id: _user.id.toString().obs,
+                                                userImage:
+                                                    _user.profileImage!.isNotEmpty
+                                                        ? _user.profileImage
+                                                            .toString()
+                                                            .obs
+                                                        : _user.wayAlbum?[0]
                                                             .toString()
                                                             .obs,
-                                                    username: _user.name
-                                                        .toString()
+                                                username:
+                                                    _user.name.toString().obs,
+                                                greeting: _chats.length == 0
+                                                    ? ''.obs
+                                                    : lastMessages(_chats).obs,
+                                                timestamp: _chats.length == 0
+                                                    ? 'just now'.obs
+                                                    : getTimeAgo(DateTime.parse(
+                                                            _chats[0].timestamp ??
+                                                                "just now"))
                                                         .obs,
-                                                    greeting: _chats.length == 0
+                                                notificationCount:
+                                                    messageCount(_chats) == 0
                                                         ? ''.obs
-                                                        : lastMessages(_chats)
-                                                            .obs,
-                                                    timestamp: _chats.length == 0
-                                                        ? ''.obs
-                                                        : getTimeAgo(DateTime.parse(
-                                                                _chats[0].timestamp ??
-                                                                    ""))
-                                                            .obs,
-                                                    notificationCount:
-                                                        messageCount(_chats) ==
-                                                                0
-                                                            ? ''.obs
-                                                            : messageCount(_chats)
-                                                                .toString()
-                                                                .obs)),
+                                                        : messageCount(_chats).toString().obs)),
                                           ),
                                         );
                                       });
@@ -141,22 +140,23 @@ class MyChatsOnePage extends StatelessWidget {
             ? _buildDeleteScreenAppBar()
             : controller.isSearch.value
                 ? TextFormField(
+                    cursorColor: appTheme.gray300,
+                    cursorWidth: 1.v,
                     controller: controller.searchController,
                     decoration: InputDecoration(
                       prefixIconConstraints: BoxConstraints(maxWidth: 50.v),
                       prefixIcon: CustomImageView(
                           margin: EdgeInsets.only(
                             left: 20.h,
-                            top: 10.h,
                             right: 5.v,
                           ),
                           imagePath: ImageConstant.imgSearch),
-                      contentPadding: EdgeInsets.only(top: 15.v),
+                      contentPadding: EdgeInsets.only(top: 9.v),
                       border: InputBorder.none,
                       hintText: 'Search',
                       suffixIcon: IconButton(
                           onPressed: () {
-                            controller.isSearch.value = false;
+                            controller.clearSearchBar();
                           },
                           icon: Icon(Icons.close)),
                     ),
@@ -231,6 +231,8 @@ class MyChatsOnePage extends StatelessWidget {
       return '🎥 ${_chats[0].type}';
     } else if (_chats[0].type == MessageType.Text.name) {
       return '${_chats[0].message}';
+    } else if (_chats[0].type == MessageType.Travel.name) {
+      return '🛫 Travel Plan';
     } else {
       return '';
     }
@@ -240,7 +242,7 @@ class MyChatsOnePage extends StatelessWidget {
     int count = 0;
     if (_chats.isNotEmpty) {
       for (var chat in _chats) {
-        if (chat.isSeen! && chat.receiverId == PrefUtils.getId()) {
+        if (!chat.isSeen! && chat.receiverId == PrefUtils.getId()) {
           count++;
         }
       }
@@ -251,80 +253,52 @@ class MyChatsOnePage extends StatelessWidget {
   Widget _noUsers() {
     return Container(
       width: double.maxFinite,
-      padding: EdgeInsets.symmetric(horizontal: 13.h),
+      decoration: AppDecoration.fillPrimary,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
-            height: 80.v,
-            width: 136.h,
-            child: Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Container(
-                    height: 80.adaptSize,
-                    width: 80.adaptSize,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 18.h,
-                      vertical: 16.v,
-                    ),
-                    decoration: AppDecoration.outlineRedA2002.copyWith(
-                      borderRadius: BorderRadiusStyle.circleBorder40,
-                    ),
-                    child: CustomImageView(
-                      imagePath: ImageConstant.imgLock,
-                      height: 48.v,
-                      width: 44.h,
-                      alignment: Alignment.center,
-                    ),
-                  ),
-                ),
-                CustomImageView(
-                  imagePath: ImageConstant.imgEllipse159880x80,
-                  height: 80.adaptSize,
-                  width: 80.adaptSize,
-                  radius: BorderRadius.circular(
-                    40.h,
-                  ),
-                  alignment: Alignment.centerLeft,
-                ),
-              ],
+          SizedBox(height: 160.v),
+          _buildKeepScrolling(),
+        ],
+      ),
+    );
+  }
+
+  /// Section Widget
+  Widget _buildKeepScrolling() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 26.h),
+      child: Column(
+        children: [
+          Container(
+            height: 120.h,
+            width: 120.v,
+            decoration: AppDecoration.fillRed.copyWith(
+              borderRadius: BorderRadiusStyle.circleBorder60,
+            ),
+            child: CustomImageView(
+              imagePath: ImageConstant.imgUserOnprimary,
+              alignment: Alignment.center,
             ),
           ),
-          SizedBox(height: 26.v),
+          SizedBox(height: 19.v),
           Text(
-            "msg_find_your_matches".tr,
-            style: theme.textTheme.headlineSmall,
+            "lbl_people_whom".tr,
+            textAlign: TextAlign.center,
+            style: CustomTextStyles.titleMediumGray900,
           ),
-          SizedBox(height: 1.v),
-          Text(
-            "msg_it_s_a_match_if".tr,
-            style: theme.textTheme.bodyMedium,
-          ),
-          SizedBox(height: 22.v),
-          CustomElevatedButton(
-            onPressed: () {
-              final controller = Get.find<CustomBottomBarController>();
-              controller.selectedIndex.value = 0;
-            },
-            text: "lbl_keep_scrolling".tr,
-            margin: EdgeInsets.only(left: 14.h),
-          ),
-          SizedBox(height: 24.v),
-          CustomOutlinedButton(
-            height: 42.v,
-            text: "msg_upgrade_your_plan".tr,
-            margin: EdgeInsets.only(left: 14.h),
-            buttonStyle: CustomButtonStyles.outlineRedATL21,
-            buttonTextStyle: CustomTextStyles.titleMediumRedA200,
-            onPressed: () {
-              Get.dialog(UpgradePlanDialogue());
-              //Get.to(() => LikesPage());
-            },
-          ),
-          SizedBox(height: 5.v),
+          //SizedBox(height: 9.v),
+          // Text(
+          //   "msg_please_keep_scrolling".tr,
+          //   style: theme.textTheme.bodySmall,
+          // ),
+          // SizedBox(height: 14.v),
+          // CustomElevatedButton(
+          //   onPressed: () {
+          //     final controller = Get.find<CustomBottomBarController>();
+          //     controller.selectedIndex.value = 0;
+          //   },
+          //   text: "lbl_keep_scrolling2".tr,
+          // ),
         ],
       ),
     );

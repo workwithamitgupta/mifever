@@ -190,7 +190,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
                 child: Center(
                   child: CustomImageView(
-                    imagePath: 'assets/images/Get your passport ready !.png',
+                    imagePath: 'assets/images/Get your passport ready.png',
                   ),
                 ),
               ),
@@ -208,8 +208,8 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Center(
                   child: CustomImageView(
                     imagePath: ImageConstant.imgGroup54,
-                    height: 87.v,
-                    width: 120.h,
+                    // height: 87.v,
+                    // width: 120.h,
                   ),
                 ),
               ),

@@ -19,15 +19,15 @@ extension DateTimeExtension on DateTime {
 String getTimeAgo(DateTime time) {
   Duration difference = DateTime.now().difference(time);
   if (difference.inDays > 365) {
-    return '${(difference.inDays / 365).floor()} years ago';
+    return '${(difference.inDays / 365).floor()} ${(difference.inDays / 365).floor() > 1 ? 'years' : 'year'} ago';
   } else if (difference.inDays > 30) {
-    return '${(difference.inDays / 30).floor()} months ago';
+    return '${(difference.inDays / 30).floor()} ${(difference.inDays / 30).floor() > 1 ? 'months' : 'month'} ago';
   } else if (difference.inDays > 0) {
-    return '${difference.inDays} days ago';
+    return '${difference.inDays} ${difference.inDays > 1 ? 'days' : 'day'} ago';
   } else if (difference.inHours > 0) {
-    return '${difference.inHours} hours ago';
+    return '${difference.inHours} ${difference.inHours > 1 ? 'hours' : 'hour'} ago';
   } else if (difference.inMinutes > 0) {
-    return '${difference.inMinutes} minutes ago';
+    return '${difference.inMinutes} ${difference.inMinutes > 1 ? 'minutes' : 'minute'} ago';
   } else {
     return 'just now';
   }
@@ -57,4 +57,27 @@ int calculateAgeFromString(String birthDateString) {
 
   // Call the calculateAge function with the parsed DateTime object
   return calculateAge(birthDate);
+}
+
+String convertUtcToLocal(DateTime time) {
+  try {
+    var dateUtc = time;
+    return "${dateUtc.hour.toString().length > 1 ? dateUtc.hour : '0' + dateUtc.hour.toString()}:${dateUtc.minute.toString().length > 1 ? dateUtc.minute : '0' + dateUtc.minute.toString()}";
+  } catch (e) {
+    return 'Invalid time format';
+  }
+}
+
+String formatMinutesToHours(int minutes) {
+  if (minutes <= 0) {
+    return '0:00';
+  }
+
+  int hours = minutes ~/ 60;
+  int remainingMinutes = minutes % 60;
+
+  String formattedHours = hours.toString();
+  String formattedMinutes = remainingMinutes.toString().padLeft(2, '0');
+
+  return '$formattedHours:$formattedMinutes';
 }

@@ -50,7 +50,7 @@ class CustomImageView extends StatelessWidget {
   Widget _buildWidget() {
     return Padding(
       padding: margin ?? EdgeInsets.zero,
-      child: InkWell(
+      child: GestureDetector(
         onTap: onTap,
         child: _buildCircleImage(),
       ),
@@ -95,7 +95,7 @@ class CustomImageView extends StatelessWidget {
               imagePath!,
               height: height,
               width: width,
-              fit: fit ?? BoxFit.contain,
+              fit: fit ?? BoxFit.cover,
               color: color,
             ),
           );

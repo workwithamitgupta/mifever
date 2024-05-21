@@ -78,15 +78,11 @@ class MatchScreenOneScreen extends GetWidget<MatchScreenOneController> {
                                   child: SizedBox(
                                     height: 200.h,
                                     width: 100.v,
-                                    child: LottieBuilder.asset(
-                                        'assets/json/Mi FullCrack.json'),
+                                    child: Lottie.asset(
+                                      'assets/json/Mi-FullCrack-V3.json',
+                                      repeat: false,
+                                    ),
                                   ),
-                                  // child: SizedBox(
-                                  //     height: 200.h,
-                                  //     width: 100.v,
-                                  //     child: ThermoTest(
-                                  //       value: 0.1,
-                                  //     )),
                                 ),
                               ),
                               SizedBox(height: 9.v),
@@ -132,9 +128,8 @@ class MatchScreenOneScreen extends GetWidget<MatchScreenOneController> {
                               Obx(
                                 () => CustomOutlinedButton(
                                   height: 50.v,
-                                  text: "00:" +
-                                      controller.elapsedSeconds.value
-                                          .toString(),
+                                  text:
+                                      "00:${controller.elapsedSeconds.value == 10 ? controller.elapsedSeconds.value : "0" + controller.elapsedSeconds.value.toString()}",
                                   //"lbl_00_01s".tr,
                                   buttonStyle:
                                       CustomButtonStyles.outlinePrimaryTL25,
@@ -142,9 +137,14 @@ class MatchScreenOneScreen extends GetWidget<MatchScreenOneController> {
                                 ),
                               ),
                               SizedBox(height: 26.v),
-                              Text(
-                                "lbl_keep_scrolling".tr,
-                                style: theme.textTheme.titleMedium,
+                              InkWell(
+                                onTap: () {
+                                  Get.back();
+                                },
+                                child: Text(
+                                  "lbl_keep_scrolling".tr,
+                                  style: theme.textTheme.titleMedium,
+                                ),
                               ),
                             ],
                           ),

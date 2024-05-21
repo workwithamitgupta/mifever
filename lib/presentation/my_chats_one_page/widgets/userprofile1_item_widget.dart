@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/presentation/chat_screen/chat_screen.dart';
 
+import '../../../data/sevices/firebase_services.dart';
+import '../../chat_screen/widgets/image_message_widget.dart';
 import '../controller/my_chats_one_controller.dart';
 import '../models/userprofile1_item_model.dart';
 
@@ -21,7 +23,8 @@ class Userprofile1ItemWidget extends StatelessWidget {
         controller.selectedUser.add(userprofile1ItemModelObj.id!.value);
         controller.isSelected.value = true;
       },
-      onTap: () {
+      onTap: () async {
+        controller.clearSearchBar();
         if (controller.isSelected.value) {
           if (controller.selectedUser
               .contains(userprofile1ItemModelObj.id!.value)) {
@@ -30,7 +33,11 @@ class Userprofile1ItemWidget extends StatelessWidget {
             controller.selectedUser.add(userprofile1ItemModelObj.id!.value);
           }
         } else {
-          Get.to(() => ChatScreen(userprofile1ItemModelObj.id!.value));
+          bool isAccountDeleted = await FirebaseServices.getIsAccountDeleted(
+              userprofile1ItemModelObj.id!.value);
+          if (!isAccountDeleted) {
+            Get.to(() => ChatScreen(userprofile1ItemModelObj.id!.value));
+          }
         }
       },
       child: Obx(
@@ -58,6 +65,11 @@ class Userprofile1ItemWidget extends StatelessWidget {
                   ),
                   Obx(
                     () => CustomImageView(
+                      onTap: () {
+                        Get.to(() => ViewImageWidget(
+                              url: userprofile1ItemModelObj.userImage!.value,
+                            ));
+                      },
                       imagePath: userprofile1ItemModelObj.userImage!.value,
                       height: 48.adaptSize,
                       width: 48.adaptSize,
@@ -85,7 +97,10 @@ class Userprofile1ItemWidget extends StatelessWidget {
                         Obx(
                           () => Text(
                             userprofile1ItemModelObj.greeting!.value,
-                            style: CustomTextStyles.bodyMediumRedA200,
+                            style: userprofile1ItemModelObj
+                                    .notificationCount!.value.isEmpty
+                                ? CustomTextStyles.bodyMediumGray900
+                                : CustomTextStyles.bodyMediumRedA200,
                           ),
                         ),
                       ],
@@ -109,7 +124,8 @@ class Userprofile1ItemWidget extends StatelessWidget {
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Container(
-                              width: 20.adaptSize,
+                              alignment: Alignment.center,
+                              // width: 25.adaptSize,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 7.h,
                                 vertical: 1.v,

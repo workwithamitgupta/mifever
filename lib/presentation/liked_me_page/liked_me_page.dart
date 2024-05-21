@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:mifever/core/app_export.dart';
 
+import '../../data/models/like/like_model.dart';
 import '../../data/models/notification/notification.dart';
 import '../../data/models/user/user_model.dart';
 import '../../data/sevices/firebase_services.dart';
@@ -31,16 +32,25 @@ class LikedMePage extends StatelessWidget {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return SizedBox.shrink();
             }
-            if (!snapshot.hasData) {
-              return SizedBox.shrink();
-            }
-            var data = snapshot.data?.docs ?? [];
+            // if (!snapshot.hasData) {
+            //   return SizedBox.shrink();
+            // }
+            List<QueryDocumentSnapshot<Object?>> data =
+                snapshot.data?.docs ?? [];
             List<NotificationModel> notifications = <NotificationModel>[];
             notifications.clear();
             notifications = data
+                .where((e) =>
+                    e['type'] !=
+                    NotificationType
+                        .DisLike.name) // Filter out items with null ID
                 .map((e) => NotificationModel.fromJson(
                     e.data() as Map<String, dynamic>))
                 .toList();
+            // notifications = data
+            //     .map((e) => NotificationModel.fromJson(
+            //         e.data() as Map<String, dynamic>))
+            //     .toList();
             if (notifications.length == 0) {
               return EmptyStatePage();
             }
@@ -83,54 +93,63 @@ class LikedMePage extends StatelessWidget {
 
   /// Section Widget
   Widget _buildFrame(List<NotificationModel> notifications) {
-    return SizedBox(
-      height: 66.v,
-      child: Obx(
-        () => ListView.separated(
-          scrollDirection: Axis.horizontal,
-          separatorBuilder: (
-            context,
-            index,
-          ) {
-            return SizedBox(
-              width: 16.h,
-            );
-          },
-          itemCount:
-              controller.likedMeModelObj.value.frame13ItemList.value.length,
-          itemBuilder: (context, index) {
-            Rx<List<Frame13ItemModel>> frame13ItemList = Rx([
-              Frame13ItemModel(
-                  dynamicText: (notifications.where((element) =>
-                          element.type == NotificationType.Like.name))
-                      .length
-                      .toString()
-                      .obs,
-                  dynamicText1: "Liked Profile".obs),
-              Frame13ItemModel(
-                  dynamicText: (notifications.where((element) =>
-                          element.type == NotificationType.View.name))
-                      .length
-                      .toString()
-                      .obs,
-                  dynamicText1: "Viewed Profile".obs),
-              Frame13ItemModel(
-                  dynamicText: (notifications.where((element) =>
-                          element.type == NotificationType.Chat.name))
-                      .length
-                      .toString()
-                      .obs,
-                  dynamicText1: "Sent Chat".obs)
-            ]);
-            Frame13ItemModel model = frame13ItemList.value[index];
-            //controller.likedMeModelObj.value.frame13ItemList.value[index];
-            return Frame13ItemWidget(
-              model,
-            );
-          },
-        ),
-      ),
-    );
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseServices.getAllMatchRealUser(directMatch: true),
+        builder: (context, matchSnapshot) {
+          if (matchSnapshot.connectionState == ConnectionState.waiting) {
+            SizedBox.shrink();
+          }
+          var _matchedData = matchSnapshot.data?.docs ?? [];
+          List<LikeModel> _matchedUser = <LikeModel>[];
+          _matchedUser.clear();
+          _matchedUser = _matchedData
+              .map((e) => LikeModel.fromJson(e.data() as Map<String, dynamic>))
+              .toList();
+          return SizedBox(
+            height: 66.v,
+            child: Obx(
+              () => ListView.separated(
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (
+                  context,
+                  index,
+                ) {
+                  return SizedBox(
+                    width: 16.h,
+                  );
+                },
+                itemCount: controller
+                    .likedMeModelObj.value.frame13ItemList.value.length,
+                itemBuilder: (context, index) {
+                  Rx<List<Frame13ItemModel>> frame13ItemList = Rx([
+                    Frame13ItemModel(
+                        dynamicText: (notifications.where((element) =>
+                                element.type == NotificationType.Like.name))
+                            .length
+                            .toString()
+                            .obs,
+                        dynamicText1: "Liked Profile".obs),
+                    Frame13ItemModel(
+                        dynamicText: (notifications.where((element) =>
+                                element.type == NotificationType.View.name))
+                            .length
+                            .toString()
+                            .obs,
+                        dynamicText1: "Viewed Profile".obs),
+                    Frame13ItemModel(
+                        dynamicText: _matchedUser.length.toString().obs,
+                        dynamicText1: "Sent Chat".obs)
+                  ]);
+                  Frame13ItemModel model = frame13ItemList.value[index];
+                  //controller.likedMeModelObj.value.frame13ItemList.value[index];
+                  return Frame13ItemWidget(
+                    model,
+                  );
+                },
+              ),
+            ),
+          );
+        });
   }
 
   /// Section Widget
@@ -208,7 +227,10 @@ class LikedMePage extends StatelessWidget {
               var data = usersSnapshot.data!;
               _user = UserModel.fromJson(data.data() as Map<String, dynamic>);
               NotificationItemModel model = NotificationItemModel()
-                ..notificationImage = RxString(_user.wayAlbum![0])
+                ..id = RxString(_user.id!)
+                ..notificationImage = RxString(_user.profileImage!.isNotEmpty
+                    ? _user.profileImage
+                    : _user.wayAlbum![0])
                 ..notificationText = RxString(getNotificationText(
                     notification: notifications[index], user: _user))
                 ..time = RxString(notifications[index].createdAt);
@@ -278,20 +300,20 @@ class LikedMePage extends StatelessWidget {
   String getNotificationText(
       {required NotificationModel notification, required UserModel user}) {
     if (notification.type == NotificationType.View.name) {
-      return "${user.name}" + 'lbl_viewed_your_profile'.tr;
+      return "${user.name} " + 'lbl_viewed_your_profile'.tr;
     } else if (notification.type == NotificationType.Chat.name) {
-      return "${user.name} send message to you";
+      return "${user.name} " + 'lbl_send_message_to_you'.tr;
     }
-    return "${user.name}" + 'lbl_liked_your_profile'.tr;
+    return "${user.name} " + 'lbl_liked_your_profile'.tr;
   }
 
   String getNotificationCount(
       {required NotificationModel notification, required UserModel user}) {
     if (notification.type == NotificationType.View.name) {
-      return "${user.name}" + 'lbl_viewed_your_profile'.tr;
+      return "${user.name} " + 'lbl_viewed_your_profile'.tr;
     } else if (notification.type == NotificationType.Chat.name) {
-      return "${user.name} send message to you";
+      return "${user.name} " + 'lbl_send_message_to_you'.tr;
     }
-    return "${user.name}" + 'lbl_liked_your_profile'.tr;
+    return "${user.name} " + 'lbl_liked_your_profile'.tr;
   }
 }

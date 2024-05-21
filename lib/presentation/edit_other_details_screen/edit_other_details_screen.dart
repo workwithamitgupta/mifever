@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
@@ -6,6 +7,8 @@ import 'package:mifever/widgets/app_bar/custom_app_bar.dart';
 import 'package:mifever/widgets/custom_elevated_button.dart';
 import 'package:mifever/widgets/custom_text_form_field.dart';
 
+import '../../data/sevices/google_places_services.dart';
+import '../question_five_screen/controller/question_five_controller.dart';
 import 'controller/edit_other_details_controller.dart';
 import 'models/frame10_item_model.dart';
 import 'widgets/other_details_item_widget.dart';
@@ -54,27 +57,17 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
                         runSpacing: 5.v,
                         spacing: 5.v,
                         children: List.generate(
-                          controller
-                              .locationControllerCityControllerList.length,
+                          controller.availableLocation.length,
                           (index) => Visibility(
                             visible: controller
-                                .locationControllerCityControllerList[index]
-                                .value
-                                .text
-                                .isNotEmpty,
+                                    .availableLocation[index].locationName !=
+                                'lbl_enter_location'.tr,
                             child: _buildMadridEurope(
                                 text:
-                                    '${controller.locationControllerCountryControllerList[index].value.text},${controller.locationControllerCityControllerList[index].value.text}',
+                                    '${controller.availableLocation[index].locationName}',
                                 onTap: () {
-                                  if (controller
-                                          .locationControllerCityControllerList
-                                          .length >
-                                      1) {
-                                    controller
-                                        .locationControllerCountryControllerList
-                                        .removeAt(index);
-                                    controller
-                                        .locationControllerCityControllerList
+                                  if (controller.availableLocation.length > 1) {
+                                    controller.availableLocation
                                         .removeAt(index);
                                   }
                                 }),
@@ -86,27 +79,39 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
                     Obx(
                       () => Column(
                         children: List.generate(
-                          controller
-                              .locationControllerCityControllerList.length,
+                          controller.availableLocation.length,
                           (index) => Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "lbl_country".tr,
+                                "lbl_location".tr,
                                 style: CustomTextStyles.titleSmallGray60002,
                               ),
                               SizedBox(height: 6.v),
-                              _buildCountryEditText2(controller
-                                      .locationControllerCountryControllerList[
-                                  index]),
-                              SizedBox(height: 21.v),
-                              Text(
-                                "lbl_city".tr,
-                                style: CustomTextStyles.titleSmallGray60002,
-                              ),
-                              SizedBox(height: 6.v),
-                              _buildCityEditText2(controller
-                                  .locationControllerCityControllerList[index]),
+                              _buildLocationField(
+                                  text: controller
+                                      .availableLocation[index].locationName,
+                                  onTap: () async {
+                                    await GooglePlacesApiServices
+                                            .placeSelectAPI(
+                                                Get.context!,
+                                                controller
+                                                    .availableLocation[index]
+                                                    .locationName)
+                                        .then((value) {
+                                      controller.availableLocation[index] =
+                                          LocationModel(
+                                              name: 'Location${index + 1}',
+                                              latLng: GeoPoint(
+                                                  value!.result.geometry!
+                                                      .location.lat,
+                                                  value.result.geometry!
+                                                      .location.lng),
+                                              locationName: value
+                                                  .result.formattedAddress
+                                                  .toString());
+                                    });
+                                  }),
                               SizedBox(height: 21.v),
                             ],
                           ),
@@ -115,10 +120,10 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
                     ),
                     InkWell(
                       onTap: () {
-                        controller.locationControllerCityControllerList
-                            .add(TextEditingController());
-                        controller.locationControllerCountryControllerList
-                            .add(TextEditingController());
+                        controller.availableLocation.add(LocationModel(
+                            name: 'Location'.tr,
+                            latLng: GeoPoint(0.0, 0.0),
+                            locationName: 'lbl_enter_location'.tr));
                       },
                       child: Text(
                         "lbl_add_more".tr,
@@ -138,15 +143,18 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
   }
 
   /// Section Widget
-  Widget _buildCountryEditText2(TextEditingController textEditingController) {
+  Widget _buildLocationField(
+      {required String text, required VoidCallback onTap}) {
     return CustomTextFormField(
-      controller: textEditingController,
-      hintText: "msg_select_your_country".tr,
-      hintStyle: CustomTextStyles.bodySmall12,
+      readOnly: true,
+      hintText: text,
+      hintStyle: text == "lbl_enter_location".tr
+          ? CustomTextStyles.bodySmall12
+          : theme.textTheme.titleSmall,
       prefix: Container(
         margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
         child: CustomImageView(
-          imagePath: ImageConstant.imgLocation01RedA200,
+          imagePath: ImageConstant.imgLocation01,
           height: 20.adaptSize,
           width: 20.adaptSize,
         ),
@@ -155,46 +163,7 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
         maxHeight: 44.v,
       ),
       textInputType: TextInputType.name,
-      validator: (value) {
-        if (value!.trim().isEmpty) {
-          return "msg_select_your_country".tr;
-        }
-        return null;
-      },
-      onChanged: (val) {
-        isButtonDisable();
-      },
-    );
-  }
-
-  /// Section Widget
-  Widget _buildCityEditText2(TextEditingController textEditingController) {
-    return CustomTextFormField(
-      controller: textEditingController,
-      hintText: "msg_select_your_city".tr,
-      hintStyle: CustomTextStyles.bodySmall12,
-      textInputAction: TextInputAction.done,
-      prefix: Container(
-        margin: EdgeInsets.fromLTRB(12.h, 12.v, 8.h, 12.v),
-        child: CustomImageView(
-          imagePath: ImageConstant.imgLocation01RedA200,
-          height: 20.adaptSize,
-          width: 20.adaptSize,
-        ),
-      ),
-      prefixConstraints: BoxConstraints(
-        maxHeight: 44.v,
-      ),
-      textInputType: TextInputType.name,
-      validator: (value) {
-        if (value!.trim().isEmpty) {
-          return "msg_select_your_city".tr;
-        }
-        return null;
-      },
-      onChanged: (val) {
-        isButtonDisable();
-      },
+      onTap: onTap,
     );
   }
 
@@ -301,7 +270,7 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
                                 : Radio(
                                     value: false,
                                     groupValue: true,
-                                    onChanged: (val) {}),
+                                    onChanged: null),
                           ),
                         ],
                       ),
@@ -323,15 +292,20 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
   Widget _buildMadridEurope(
       {required String text, required VoidCallback onTap}) {
     return Container(
+      constraints: BoxConstraints(maxWidth: 150.v),
       padding: EdgeInsets.symmetric(horizontal: 15.v, vertical: 8.v),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20), color: appTheme.redA200),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            text,
-            style: TextStyle(color: Colors.white),
+          SizedBox(
+            width: 100.v,
+            child: Text(
+              text,
+              style: TextStyle(
+                  color: Colors.white, overflow: TextOverflow.ellipsis),
+            ),
           ),
           SizedBox(width: 2.v),
           CustomImageView(
@@ -370,9 +344,8 @@ class EditOtherDetailsScreen extends GetWidget<EditOtherDetailsController> {
   }
 
   isButtonDisable() {
-    controller.isButtonDisable.value = controller
-                .locationControllerCityControllerList
-                .firstWhereOrNull((element) => element.text.isEmpty) !=
+    controller.isButtonDisable.value = controller.availableLocation
+                .firstWhereOrNull((element) => element.locationName.isEmpty) !=
             null
         ? true
         : false;

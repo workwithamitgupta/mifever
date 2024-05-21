@@ -1,4 +1,3 @@
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/core/utils/progress_dialog_utils.dart';
 import 'package:mifever/data/models/user/about_me_model.dart';
@@ -9,6 +8,7 @@ import 'package:mifever/presentation/question_one_screen/controller/question_one
 import 'package:mifever/presentation/question_seven_screen/models/question_seven_model.dart';
 import 'package:mifever/presentation/question_two_screen/controller/question_two_controller.dart';
 
+import '../../../data/sevices/firebase_analytics_service/firebase_analytics_service.dart';
 import '../../../widgets/custom_bottom_bar.dart';
 import '../../question_five_screen/controller/question_five_controller.dart';
 import '../../question_six_screen/controller/question_six_controller.dart';
@@ -24,21 +24,13 @@ class QuestionSevenController extends GetxController {
   final q6 = Get.find<QuestionSixController>();
   var isButtonDisable = true.obs;
 
-  List getCityList() {
-    List cityList = [];
-    for (var city in q5.locationControllerCity) {
-      cityList.add(city.text);
-    }
-    return cityList;
-  }
-
-  List getCountryList() {
-    List countryList = [];
-    for (var country in q5.locationControllerCountry) {
-      countryList.add(country.text);
-    }
-    return countryList;
-  }
+  // List getAvailableLocationList() {
+  //   List locationList = [];
+  //   for (var location in q5.availableLocationTextController) {
+  //     locationList.add(location.text);
+  //   }
+  //   return locationList;
+  // }
 
   Future<List> getWayAlbum() async {
     List wayAlbum = [];
@@ -65,6 +57,9 @@ class QuestionSevenController extends GetxController {
     return lifeAlbumUrl;
   }
 
+  var imageProgressList = [false, false, false, false, false].obs;
+  var lifeAlbumImagesProcessList = [false, false, false, false, false].obs;
+
   var imagesList = [
     '',
     '',
@@ -86,26 +81,33 @@ class QuestionSevenController extends GetxController {
     lifeAlbum
         .addAll(lifeAlbumImagesList.where((element) => element.isNotEmpty));
     wayAlbum.addAll(imagesList.where((element) => element.isNotEmpty));
-    isButtonDisable.value = lifeAlbum.length < 2 || wayAlbum.length < 2;
+    isButtonDisable.value = lifeAlbum.length < 2 ||
+        wayAlbum.length < 2 ||
+        imageProgressList.contains(true) ||
+        lifeAlbumImagesProcessList.contains(true);
   }
 
   void onTapContinue() async {
     ProgressDialogUtils.showProgressDialog();
     UserModel userModel = UserModel(
+      isAccountDeleted: false,
+      isApproved: true,
+      planName: '',
       id: PrefUtils.getId(),
       name: q1.nameController.text,
       nameAudio: await FirebaseServices.uploadFile(
           filePath: q1.recordedFilePath.value, contentType: '.mp3'),
+      audioDuration: q1.timerCount.value,
       gender: q2.selectedGender.value,
       dob: q3.selectedDate.value,
       interestList: q4.selectedInterestList,
-      city: q5.cityEditTextController.text,
-      country: q5.countryEditTextController.text,
-      availableCity: getCityList(),
-      availableCountry: getCountryList(),
+      locationText: q5.locationTextController.text,
+      location: q5.locationLatLong.value,
+      availableLocation: q5.locationList,
       whatDoYouWant: q6.whatDoYouWantToFindOut.value,
-      wayAlbum: await getWayAlbum(),
-      lifeAlbum: await getLifeAlbum(),
+      wayAlbum: imagesList.where((element) => element.isNotEmpty).toList(),
+      lifeAlbum:
+          lifeAlbumImagesList.where((element) => element.isNotEmpty).toList(),
       aboutMe: AboutMe(
         aboutMyCulture: '',
         thingsYouLike: '',
@@ -116,13 +118,13 @@ class QuestionSevenController extends GetxController {
       isProfileComplete: true,
     );
     bool isSuccess = await FirebaseServices.updateUser(userModel);
-    ProgressDialogUtils.hideProgressDialog();
     if (isSuccess) {
-      Fluttertoast.showToast(msg: 'Success');
+      ProgressDialogUtils.hideProgressDialog();
       PrefUtils.setUserName(q1.nameController.text.trim());
       PrefUtils.setGender(q2.selectedGender.value);
+      PrefUtils.setAvailableLocation(q5.locationList[0].locationName);
+      AnalyticsService.signUp();
       Get.offAll(() => CustomBottomBar());
-      //Get.toNamed(AppRoutes.homeScreen);
     }
   }
 }

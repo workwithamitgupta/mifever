@@ -16,7 +16,7 @@ class FlightRecommendationController extends GetxController {
 
   final dropLocationToController = TextEditingController();
 
-  Rx<DateTime> initialDateTime = DateTime.now().obs;
+  Rx<DateTime> initialDateTime = DateTime.now().add(Duration(days: 1)).obs;
 
   var selectedDate = 'Select date'.obs;
 
@@ -27,6 +27,8 @@ class FlightRecommendationController extends GetxController {
   var pickLocationSkyId = ''.obs;
 
   var dropLocationSkyId = ''.obs;
+
+  var subTitle = ''.obs;
 
   List<Suggestions> suggestions = <Suggestions>[].obs;
 
@@ -42,9 +44,10 @@ class FlightRecommendationController extends GetxController {
           },
           options: Options(headers: {
             'X-RapidAPI-Key':
-                '1c94f30592mshd4f39cb8415eefep1e7128jsn487b6d691b03',
+                '028715ed89mshca764b48bb77795p105d76jsndf008a22af4a',
             'X-RapidAPI-Host': 'sky-scrapper.p.rapidapi.com'
           }));
+      print(response.statusCode);
       if (response.statusCode == 200) {
         print(response.data);
         suggestions.clear();
@@ -66,6 +69,8 @@ class FlightRecommendationController extends GetxController {
       var _dio = Dio();
       log('try');
       log(selectedDate.value);
+      //29475321 indore
+      //128668037 bhopal
       var response = await _dio.get(
           'https://sky-scrapper.p.rapidapi.com/api/v2/flights/searchFlights',
           queryParameters: {
@@ -73,8 +78,8 @@ class FlightRecommendationController extends GetxController {
             'destinationSkyId': dropLocationSkyId.value,
             'originEntityId': pickLocationEntityId.value,
             'destinationEntityId': dropLocationEntityId.value,
-            'date': '2024-03-22',
-            // selectedDate.value,
+            'date': selectedDate.value,
+            //'2024-04-08',
             'adults': 1,
             'currency': 'USD',
             'market': 'en-US',
@@ -82,10 +87,9 @@ class FlightRecommendationController extends GetxController {
           },
           options: Options(headers: {
             'X-RapidAPI-Key':
-                '1c94f30592mshd4f39cb8415eefep1e7128jsn487b6d691b03',
+                '028715ed89mshca764b48bb77795p105d76jsndf008a22af4a',
             'X-RapidAPI-Host': 'sky-scrapper.p.rapidapi.com'
           }));
-
       if (response.statusCode == 200) {
         List dataList = response.data['data']['itineraries'];
         log(dataList.toString());

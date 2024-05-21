@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
-import 'package:mifever/presentation/help_and_support_screen/models/help_and_support_screen_model.dart';
 
 class HelpAndSupportController extends GetxController {
-  Rx<HelpAndSupportModel> privacyAndPolicyOneModelObj =
-      HelpAndSupportModel().obs;
-
+  TextEditingController helpController = TextEditingController();
   Rx<String> radioGroup = "".obs;
+  Rx<SelectionPopupModel> selectedReason =
+      SelectionPopupModel(title: 'Account Issues', value: 'Account Issues').obs;
 }

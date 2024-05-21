@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
+import 'package:mifever/data/sevices/firebase_services.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
 import 'package:mifever/widgets/app_bar/custom_app_bar.dart';
 import 'package:mifever/widgets/custom_elevated_button.dart';
@@ -161,21 +162,42 @@ class QuestionSevenScreen extends GetWidget<QuestionSevenController> {
             controller.imagesList.length,
             (index) => controller.imagesList[index].isNotEmpty
                 ? _buildEditImageView(
+                    false,
                     controller.imagesList,
                     index,
                     () async {
-                      controller.imagesList[index] =
+                      String filePath =
                           await MediaServices.pickImageFromGallery();
-                      controller.checkButtonDisable();
+                      if (filePath.isNotEmpty) {
+                        controller.imagesList[index] = filePath;
+                        controller.imageProgressList[index] = true;
+                        controller.checkButtonDisable();
+                        String uploadFileUrl =
+                            await FirebaseServices.uploadFile(
+                                filePath: filePath, contentType: ".jpg");
+                        controller.imageProgressList[index] = false;
+                        controller.imagesList[index] = uploadFileUrl;
+                        controller.checkButtonDisable();
+                      }
                     },
                   )
                 : _buildAddImageView(
                     controller.imagesList,
                     index,
                     () async {
-                      controller.imagesList[index] =
+                      String filePath =
                           await MediaServices.pickImageFromGallery();
-                      controller.checkButtonDisable();
+                      if (filePath.isNotEmpty) {
+                        controller.imagesList[index] = filePath;
+                        controller.imageProgressList[index] = true;
+                        controller.checkButtonDisable();
+                        String uploadFileUrl =
+                            await FirebaseServices.uploadFile(
+                                filePath: filePath, contentType: ".jpg");
+                        controller.imageProgressList[index] = false;
+                        controller.imagesList[index] = uploadFileUrl;
+                        controller.checkButtonDisable();
+                      }
                     },
                   ),
           )),
@@ -191,21 +213,42 @@ class QuestionSevenScreen extends GetWidget<QuestionSevenController> {
             controller.lifeAlbumImagesList.length,
             (index) => controller.lifeAlbumImagesList[index].isNotEmpty
                 ? _buildEditImageView(
+                    true,
                     controller.lifeAlbumImagesList,
                     index,
                     () async {
-                      controller.lifeAlbumImagesList[index] =
+                      String filePath =
                           await MediaServices.pickImageFromGallery();
-                      controller.checkButtonDisable();
+                      if (filePath.isNotEmpty) {
+                        controller.lifeAlbumImagesList[index] = filePath;
+                        controller.lifeAlbumImagesProcessList[index] = true;
+                        controller.checkButtonDisable();
+                        String uploadFileUrl =
+                            await FirebaseServices.uploadFile(
+                                filePath: filePath, contentType: ".jpg");
+                        controller.lifeAlbumImagesProcessList[index] = false;
+                        controller.lifeAlbumImagesList[index] = uploadFileUrl;
+                        controller.checkButtonDisable();
+                      }
                     },
                   )
                 : _buildAddImageView(
                     controller.lifeAlbumImagesList,
                     index,
                     () async {
-                      controller.lifeAlbumImagesList[index] =
+                      String filePath =
                           await MediaServices.pickImageFromGallery();
-                      controller.checkButtonDisable();
+                      if (filePath.isNotEmpty) {
+                        controller.lifeAlbumImagesList[index] = filePath;
+                        controller.lifeAlbumImagesProcessList[index] = true;
+                        controller.checkButtonDisable();
+                        String uploadFileUrl =
+                            await FirebaseServices.uploadFile(
+                                filePath: filePath, contentType: ".jpg");
+                        controller.lifeAlbumImagesProcessList[index] = false;
+                        controller.lifeAlbumImagesList[index] = uploadFileUrl;
+                        controller.checkButtonDisable();
+                      }
                     },
                   ),
           )),
@@ -233,7 +276,8 @@ class QuestionSevenScreen extends GetWidget<QuestionSevenController> {
     );
   }
 
-  SizedBox _buildEditImageView(List imagesList, int index, VoidCallback onTap) {
+  SizedBox _buildEditImageView(
+      bool isLifeAlbum, List imagesList, int index, VoidCallback onTap) {
     return SizedBox(
       height: 100.v,
       width: 95.h,
@@ -265,6 +309,29 @@ class QuestionSevenScreen extends GetWidget<QuestionSevenController> {
             width: 20.adaptSize,
             alignment: Alignment.center,
           ),
+          Positioned(
+            right: 0,
+            top: 0,
+            child: InkWell(
+              onTap: () {
+                if (isLifeAlbum) {
+                  controller.lifeAlbumImagesList[index] = '';
+                } else {
+                  imagesList[index] = '';
+                }
+                controller.checkButtonDisable();
+              },
+              child: Visibility(
+                visible: isLifeAlbum
+                    ? !controller.lifeAlbumImagesProcessList[index]
+                    : !controller.imageProgressList[index],
+                child: Icon(
+                  Icons.close,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+          )
         ],
       ),
     );

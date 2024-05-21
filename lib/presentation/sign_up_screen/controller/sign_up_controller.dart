@@ -35,6 +35,7 @@ class SignUpController extends GetxController {
         password: newpasswordController.text.trim());
     if (isSuccess) {
       UserModel userModel = UserModel(
+        timestamp: DateTime.now().toUtc().toString(),
         email: emailController.text.trim(),
         isProfileComplete: false,
       );

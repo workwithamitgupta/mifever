@@ -2,13 +2,17 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:mifever/data/models/notification/notification.dart';
 import 'package:mifever/data/models/user/user_model.dart';
 import 'package:mifever/data/sevices/firebase_services.dart';
 import 'package:mifever/firebase_options.dart';
+import 'package:mifever/presentation/chat_screen/chat_screen.dart';
+import 'package:mifever/presentation/like_screen/like_screen.dart';
 
 import 'core/app_export.dart';
 import 'data/sevices/firebase_messageing_service.dart';
@@ -17,16 +21,18 @@ import 'data/sevices/stripe_service.dart';
 
 final GlobalKey<NavigatorState> navigationKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
+  print('-----main-----');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await NotificationService.initialize();
   await FirebaseMessagingService.initialize();
   await FirebaseMessagingService.generateToken();
-  await NotificationService.initialize();
+  await FirebaseMessagingService.onBackgroundMessage();
+  // await AnalyticsService.initMixpanel();
   await PrefUtils().init();
   Stripe.publishableKey = StripePaymentHandle.PUBLISHABLE_KEY;
   Stripe.merchantIdentifier = 'any string works';
   await Stripe.instance.applySettings();
-
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((value) {
@@ -52,6 +58,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    // Handle notification taps when the app is in the background but still running
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+      print(message.data['id']);
+      if (PrefUtils.getId().isNotEmpty) {
+        if (message.data['type'] == NotificationType.Chat.name) {
+          Get.to(() => ChatScreen('${message.data['id']}'));
+        } else {
+          Get.to(() => LikeScreen());
+        }
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
     return Sizer(builder: (context, orientation, deviceType) {
       return GetMaterialApp(
@@ -61,7 +84,7 @@ class _MyAppState extends State<MyApp> {
         translations: LocalizationService(),
         locale: Locale(PrefUtils.getLang()), //for setting localization strings
         fallbackLocale: Locale('en', 'US'),
-        title: 'mifever',
+        title: 'MiFever',
         initialBinding: InitialBindings(),
         initialRoute: AppRoutes.initialRoute,
         getPages: AppRoutes.pages,

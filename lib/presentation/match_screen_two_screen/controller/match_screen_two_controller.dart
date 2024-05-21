@@ -9,7 +9,7 @@ class MatchScreenTwoController extends GetxController {
   Rx<MatchScreenTwoModel> matchScreenTwoModelObj = MatchScreenTwoModel().obs;
 
   late Timer _timer;
-  RxInt elapsedSeconds = 5.obs;
+  RxInt elapsedSeconds = 10.obs;
 
   void startTime() async {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
@@ -23,9 +23,9 @@ class MatchScreenTwoController extends GetxController {
   }
 
   @override
-  void onInit() {
+  void onReady() {
     startTime();
-    super.onInit();
+    super.onReady();
   }
 
   @override

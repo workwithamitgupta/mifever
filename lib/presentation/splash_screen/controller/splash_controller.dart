@@ -9,7 +9,7 @@ class SplashController extends GetxController {
 
   @override
   void onReady() {
-    Future.delayed(const Duration(seconds: 6), () {
+    Future.delayed(Duration(seconds: 6), () {
       if (PrefUtils.getId().isNotEmpty) {
         FirebaseServices.getCurrentUser().then((user) {
           if (user != null) {
@@ -26,5 +26,6 @@ class SplashController extends GetxController {
         );
       }
     });
+    // }
   }
 }

@@ -9,6 +9,7 @@ import '../../../widgets/app_bar/appbar_leading_image.dart';
 import '../../../widgets/app_bar/appbar_subtitle.dart';
 import '../../../widgets/app_bar/custom_app_bar.dart';
 import '../../../widgets/custom_elevated_button.dart';
+import '../widgets/travel_user_list.dart';
 
 class TravelPlanScreen extends StatelessWidget {
   TravelPlanScreen({Key? key}) : super(key: key);
@@ -31,96 +32,105 @@ class TravelPlanScreen extends StatelessWidget {
               data['docId'] = e.id;
               return TravelPlanModel.fromJson(data);
             }).toList();
-            return ListView.builder(
-              padding: EdgeInsets.all(20.h),
-              itemCount: _plans.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: EdgeInsets.only(bottom: 16.h),
-                  padding: EdgeInsets.only(left: 10.v, bottom: 20.h),
-                  decoration: AppDecoration.outlineGray,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            _plans[index].planName!,
-                            style: CustomTextStyles.titleMediumBlack900,
-                          ),
-                          PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                PopupMenuItem(
-                                    value: 'EDIT', child: Text('Edit')),
-                                PopupMenuItem(
-                                    value: _plans[index].isActive!
-                                        ? 'INACTIVE'
-                                        : 'ACTIVE',
-                                    child: Text(_plans[index].isActive!
-                                        ? 'Inactive'
-                                        : 'Active')),
-                                PopupMenuItem(
-                                    value: 'DELETE', child: Text('Delete')),
-                              ];
-                            },
-                            onSelected: (val) {
-                              if (val == 'EDIT') {
-                                onEdit(_plans[index]);
-                              } else if (val == 'INACTIVE') {
-                                onInActive(_plans[index]);
-                              } else if (val == 'ACTIVE') {
-                                onActive(_plans[index]);
-                              } else if (val == 'DELETE') {
-                                onDelete(_plans[index]);
-                              }
-                            },
-                          )
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          CustomImageView(
-                            imagePath: ImageConstant.imgCalendar03,
-                            height: 24.adaptSize,
-                            width: 24.adaptSize,
-                          ),
-                          SizedBox(width: 8.v),
-                          Text(
-                              '${DateTime.parse(_plans[index].startDate!).format()} ${DateTime.parse(_plans[index].endDate!).format()}')
-                        ],
-                      ),
-                      SizedBox(height: 8.h),
-                      Row(
-                        children: [
-                          CustomImageView(
-                            imagePath: ImageConstant.imgLocation01RedA200,
-                            height: 24.adaptSize,
-                            width: 24.adaptSize,
-                          ),
-                          SizedBox(width: 8.v),
-                          Text(_plans[index].location!),
-                        ],
-                      ),
-                      SizedBox(height: 8.h),
-                      Visibility(
-                        visible: _plans[index].isActive!,
-                        child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 25.h, horizontal: 10.v)),
-                            onPressed: () {},
-                            child: Text(
-                              'Share via chat',
-                              style: TextStyle(color: appTheme.redA200),
-                            )),
-                      )
-                    ],
-                  ),
-                );
-              },
-            );
+            return _plans.length == 0
+                ? _noTrips()
+                : ListView.builder(
+                    padding: EdgeInsets.all(20.h),
+                    itemCount: _plans.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: EdgeInsets.only(bottom: 16.h),
+                        padding: EdgeInsets.only(
+                            left: 10.v, bottom: 20.h, right: 10.v),
+                        decoration: AppDecoration.outlineGray,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  _plans[index].planName!,
+                                  style: CustomTextStyles.titleMediumBlack900,
+                                ),
+                                Row(
+                                  children: [
+                                    PopupMenuButton(
+                                      itemBuilder: (context) {
+                                        return [
+                                          PopupMenuItem(
+                                              value: 'EDIT',
+                                              child: Text('Edit')),
+                                          PopupMenuItem(
+                                              value: _plans[index].isActive!
+                                                  ? 'INACTIVE'
+                                                  : 'ACTIVE',
+                                              child: Text(
+                                                  _plans[index].isActive!
+                                                      ? 'Inactive'
+                                                      : 'Active')),
+                                          PopupMenuItem(
+                                              value: 'DELETE',
+                                              child: Text('Delete')),
+                                        ];
+                                      },
+                                      onSelected: (val) {
+                                        if (val == 'EDIT') {
+                                          onEdit(_plans[index]);
+                                        } else if (val == 'INACTIVE') {
+                                          onInActive(_plans[index]);
+                                        } else if (val == 'ACTIVE') {
+                                          onActive(_plans[index]);
+                                        } else if (val == 'DELETE') {
+                                          onDelete(_plans[index]);
+                                        }
+                                      },
+                                    ),
+                                    Visibility(
+                                      visible: _plans[index].isActive!,
+                                      child: CustomImageView(
+                                        onTap: () {
+                                          Get.to(() => TravelPlanUserList(
+                                                planModel: _plans[index],
+                                              ));
+                                        },
+                                        imagePath: 'assets/images/message.svg',
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                CustomImageView(
+                                  imagePath: ImageConstant.imgCalendar03,
+                                  height: 24.adaptSize,
+                                  width: 24.adaptSize,
+                                ),
+                                SizedBox(width: 8.v),
+                                Text(
+                                    '${DateTime.parse(_plans[index].startDate!).format()} ${DateTime.parse(_plans[index].endDate!).format()}')
+                              ],
+                            ),
+                            SizedBox(height: 8.h),
+                            Row(
+                              children: [
+                                CustomImageView(
+                                  imagePath: ImageConstant.imgLocation01RedA200,
+                                  height: 24.adaptSize,
+                                  width: 24.adaptSize,
+                                ),
+                                SizedBox(width: 8.v),
+                                Expanded(child: Text(_plans[index].location!)),
+                              ],
+                            ),
+                            SizedBox(height: 8.h),
+                          ],
+                        ),
+                      );
+                    },
+                  );
           }),
       bottomNavigationBar: _buildCreate(),
     );
@@ -168,6 +178,31 @@ class TravelPlanScreen extends StatelessWidget {
       onPressed: () {
         Get.toNamed(AppRoutes.createTravelPlanScreen);
       },
+    );
+  }
+
+  Widget _noTrips() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Center(
+          child: CustomImageView(
+            imagePath: 'assets/images/no_trip.svg',
+          ),
+        ),
+        SizedBox(height: 16.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.h),
+          child: Center(
+              child: Text(
+            'lbl_create_an_itinerary'.tr,
+            textAlign: TextAlign.center,
+          )),
+        ),
+        SizedBox(height: 16.h),
+        // _buildCreate()
+      ],
     );
   }
 

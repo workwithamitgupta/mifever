@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
 import 'package:mifever/widgets/app_bar/appbar_subtitle.dart';
@@ -112,7 +113,7 @@ class CreateTravelPlanScreen extends GetWidget<CreateTravelPlanController> {
       hintStyle: theme.textTheme.bodySmall!,
       validator: (value) {
         if (value!.isEmpty) {
-          return "err_msg_please_enter_valid_text".tr;
+          return "err_msg_please_enter_plan_name".tr;
         }
         return null;
       },
@@ -142,7 +143,7 @@ class CreateTravelPlanScreen extends GetWidget<CreateTravelPlanController> {
       ),
       validator: (value) {
         if (value!.isEmpty) {
-          return "err_msg_please_enter_valid_text".tr;
+          return "err_msg_please_enter_location".tr;
         }
         return null;
       },
@@ -210,8 +211,7 @@ class CreateTravelPlanScreen extends GetWidget<CreateTravelPlanController> {
                 () => Text(
                   selectYourTravel.value.format(),
                   style: theme.textTheme.bodySmall!.copyWith(
-                    color: appTheme.gray60004,
-                  ),
+                      color: appTheme.gray900, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -242,7 +242,7 @@ class CreateTravelPlanScreen extends GetWidget<CreateTravelPlanController> {
                   data: ThemeData(indicatorColor: appTheme.redA200),
                   child: CalendarDatePicker(
                     initialDate: controller.initialDateTime.value,
-                    firstDate: DateTime(1900),
+                    firstDate: DateTime.now().add(Duration(days: 1)),
                     lastDate: DateTime(2030),
                     onDateChanged: (DateTime date) {
                       if (date != controller.initialDateTime.value) {
@@ -285,11 +285,11 @@ class CreateTravelPlanScreen extends GetWidget<CreateTravelPlanController> {
       },
     );
 
-    if (picked != null && picked != controller.initialDateTime.value) {
-      controller.initialDateTime.value = picked;
-      date.value = picked;
-      //'${picked.day}/${picked.month}/${picked.year}';
-    }
+    // if (picked != null && picked != controller.initialDateTime.value) {
+    //   controller.initialDateTime.value = picked;
+    //   date.value = picked;
+    //   //'${picked.day}/${picked.month}/${picked.year}';
+    // }
   }
 
   onTapCreate() {
@@ -297,7 +297,11 @@ class CreateTravelPlanScreen extends GetWidget<CreateTravelPlanController> {
     if (!isValid) {
       return;
     } else {
-      controller.addPlan();
+      if (controller.endDate.value.isBefore(controller.startDate.value)) {
+        Fluttertoast.showToast(msg: 'lbl_end_date_must'.tr);
+      } else {
+        controller.addPlan();
+      }
     }
   }
 }

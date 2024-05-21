@@ -17,18 +17,20 @@ import '../controller/about_me_controller.dart.dart';
 class AddAboutMeView extends GetWidget<AboutMePageController> {
   const AddAboutMeView(
       {Key? key,
-      required this.text,
+      required this.question,
+      required this.answer,
       required this.aboutMe,
       required this.mapKey})
       : super(key: key);
-  final String text;
+  final String answer;
+  final String question;
   final AboutMe aboutMe;
   final String mapKey;
 
   @override
   Widget build(BuildContext context) {
-    if (text.isNotEmpty) {
-      controller.descriptionController.text = text;
+    if (answer.isNotEmpty) {
+      controller.descriptionController.text = answer;
     } else {
       controller.descriptionController.clear();
     }
@@ -46,13 +48,16 @@ class AddAboutMeView extends GetWidget<AboutMePageController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "msg_describe_a_things".tr,
+                question,
+                //"msg_describe_a_things".tr,
                 style: theme.textTheme.titleSmall,
               ),
               SizedBox(height: 11.v),
               CustomTextFormField(
+                maxLength: 250,
                 controller: controller.descriptionController,
-                hintText: "msg_lorem_ipsum_dolor".tr,
+                hintText: 'lbl_enter_text_here'.tr,
+                //"msg_lorem_ipsum_dolor".tr,
                 hintStyle: CustomTextStyles.bodyMediumGray900,
                 textInputAction: TextInputAction.done,
                 maxLines: 8,

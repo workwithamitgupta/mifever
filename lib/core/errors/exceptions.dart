@@ -22,6 +22,7 @@ class NoInternetException implements Exception {
 
 class AuthExceptionHandler {
   static String handleException(FirebaseAuthException e) {
+    print(e.code);
     String errorMessage = '';
     switch (e.code) {
       case 'invalid-email':
@@ -41,6 +42,12 @@ class AuthExceptionHandler {
         break;
       case 'network-request-failed':
         errorMessage = 'Network error. Check your connection.';
+        break;
+      case 'email-already-in-use':
+        errorMessage = 'Email address is already in use.';
+        break;
+      case 'invalid-credential':
+        errorMessage = 'Invalid Credential';
         break;
       default:
         errorMessage = 'Login failed. Please try again.';

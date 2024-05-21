@@ -31,6 +31,8 @@ class CustomTextFormField extends StatelessWidget {
       this.validator,
       this.onTap,
       this.readOnly,
+      this.maxLength,
+      this.counter,
       this.onChanged})
       : super(
           key: key,
@@ -84,7 +86,10 @@ class CustomTextFormField extends StatelessWidget {
 
   final bool? readOnly;
 
+  final int? maxLength;
+
   VoidCallback? onTap;
+  Widget? counter;
   @override
   Widget build(BuildContext context) {
     return alignment != null
@@ -98,6 +103,7 @@ class CustomTextFormField extends StatelessWidget {
   Widget get textFormFieldWidget => SizedBox(
         width: width ?? double.maxFinite,
         child: TextFormField(
+          maxLength: maxLength,
           onTap: onTap,
           readOnly: readOnly ?? false,
           cursorColor: appTheme.redA200,
@@ -117,6 +123,7 @@ class CustomTextFormField extends StatelessWidget {
         ),
       );
   InputDecoration get decoration => InputDecoration(
+        counter: counter,
         hintText: hintText ?? "",
         hintStyle: hintStyle ?? theme.textTheme.titleMedium,
         prefixIcon: prefix,
@@ -170,6 +177,7 @@ class CustomTextFormField extends StatelessWidget {
             width: 1,
           ),
         ),
+        errorMaxLines: 3,
         errorStyle: TextStyle(
           color: appTheme.redA200,
           fontSize: 12.fSize,

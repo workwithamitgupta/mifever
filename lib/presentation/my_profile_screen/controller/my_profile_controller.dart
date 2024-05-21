@@ -1,8 +1,6 @@
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/presentation/my_profile_screen/models/my_profile_model.dart';
 
-import '../../../data/models/subscriptions/subscription_model.dart';
-import '../../../data/sevices/firebase_services.dart';
 import '../models/my_profile_one_model.dart';
 
 /// A controller class for the MyProfileScreen.
@@ -19,12 +17,9 @@ class MyProfileController extends GetxController {
 
   RxString planName = ''.obs;
 
-  getSubscription() async {
-    SubscriptionModel? subscriptionModel =
-        await FirebaseServices.getSubscription();
-    if (subscriptionModel != null) {
-      planName.value = subscriptionModel.plan.id!.value;
-      print('plan==>${planName.value}');
-    }
+  @override
+  void onInit() {
+    super.onInit();
+    isSelectedSwitch.value = PrefUtils.getIsNotificationON();
   }
 }

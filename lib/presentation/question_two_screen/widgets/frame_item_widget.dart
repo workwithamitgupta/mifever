@@ -62,8 +62,7 @@ class FrameItemWidget extends StatelessWidget {
                         height: 20.adaptSize,
                         width: 20.adaptSize,
                       )
-                    : Radio(
-                        value: false, groupValue: true, onChanged: (val) {}),
+                    : Radio(value: false, groupValue: true, onChanged: null),
               ),
             ],
           ),

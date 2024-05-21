@@ -142,7 +142,7 @@ class QuestionSixScreen extends GetWidget<QuestionSixController> {
                                 : Radio(
                                     value: false,
                                     groupValue: true,
-                                    onChanged: (val) {}),
+                                    onChanged: null),
                           ),
                         ],
                       ),

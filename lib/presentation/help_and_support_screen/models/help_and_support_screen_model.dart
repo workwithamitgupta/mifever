@@ -1,3 +1,25 @@
-/// This class defines the variables used in the [privacy_and_policy_one_screen],
-/// and is typically used to hold data that is passed between different parts of the application.
-class HelpAndSupportModel {}
+class HelpAndSupportModel {
+  final String userId;
+  final String email;
+  final String status;
+  final String reason;
+  HelpAndSupportModel(
+      {required this.userId,
+      required this.email,
+      required this.status,
+      required this.reason});
+
+  factory HelpAndSupportModel.fromJson(Map<String, dynamic> json) =>
+      HelpAndSupportModel(
+          userId: json['userId'],
+          email: json['email'],
+          status: json['status'],
+          reason: json['reason']);
+
+  Map<String, dynamic> toJson() => {
+        'userId': userId,
+        'email': email,
+        'status': status,
+        'reason': reason,
+      };
+}

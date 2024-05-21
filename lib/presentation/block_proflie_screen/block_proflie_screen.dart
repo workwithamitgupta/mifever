@@ -9,6 +9,7 @@ import 'package:mifever/widgets/custom_elevated_button.dart';
 import 'package:mifever/widgets/custom_text_form_field.dart';
 
 import '../../data/models/thermometer_model/thermometer_model.dart';
+import '../../data/sevices/firebase_analytics_service/firebase_analytics_service.dart';
 import '../../data/sevices/firebase_services.dart';
 import 'controller/block_proflie_controller.dart';
 
@@ -16,6 +17,8 @@ import 'controller/block_proflie_controller.dart';
 class BlockProflieScreen extends GetWidget<BlockProflieController> {
   BlockProflieScreen({Key? key}) : super(key: key);
   final String? id = Get.arguments[0];
+  final String? name = Get.arguments[1];
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -32,11 +35,11 @@ class BlockProflieScreen extends GetWidget<BlockProflieController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 268.h,
-                margin: EdgeInsets.only(right: 74.h),
+                //width: 268.h,
+                //margin: EdgeInsets.only(right: 74.h),
                 child: Text(
-                  "msg_select_reason_why".tr,
-                  maxLines: 2,
+                  "msg_select_reason_why".tr + " $name",
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: CustomTextStyles.titleLargeGray900.copyWith(
                     height: 1.40,
@@ -163,7 +166,7 @@ class BlockProflieScreen extends GetWidget<BlockProflieController> {
                                 : Radio(
                                     value: false,
                                     groupValue: true,
-                                    onChanged: (val) {}),
+                                    onChanged: null),
                           ),
                         ],
                       ),
@@ -220,12 +223,15 @@ class BlockProflieScreen extends GetWidget<BlockProflieController> {
     );
     await FirebaseServices.addBlockUser(model);
     ThermometerModel thermometerModel = ThermometerModel(
+      timestamp: DateTime.now().toString(),
       roomId: FirebaseServices.createChatRoomId(id!),
+      userIds: [id, PrefUtils.getId()],
       percentageValue: 0,
     );
-    FirebaseServices.addThermometerValue(thermometerModel);
+    await FirebaseServices.addThermometerValue(thermometerModel);
     controller.optionalController.clear();
     ProgressDialogUtils.hideProgressDialog();
+    AnalyticsService.block(name ?? "");
     Get.back();
   }
 }

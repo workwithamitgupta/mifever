@@ -2,7 +2,7 @@ final Map<String, String> enUs = {
   // Onboarding Screen Screen
   "lbl_sign_up": "Sign Up",
   "msg_connect_with_people": "Connect with people who share your interests.",
-  "msg_continue_with_email": "Continue with Email",
+  "msg_continue_with_email": "Continue With Email",
   "msg_don_t_have_an_account": "Don’t have an account?",
   "msg_find_your_perfect": "Match Across Borders With Mifever",
 
@@ -55,14 +55,14 @@ final Map<String, String> enUs = {
 
   // Question Three Screen
   "lbl_no": "No", "lbl_yes_right": "Yes. Right!!",
-  "lbl_your_age_is_22": "Your Age is",
+  "lbl_your_age_is_22": "Your age is",
 
   // Question Three One Screen
   "lbl_25_jul_2022": "25 Jul 2022",
 
   // Question Five Screen
-  "msg_select_your_city": "Select your City",
-  "msg_select_your_country": "Select your Country",
+  "msg_select_your_city": "Select your city",
+  "msg_select_your_country": "Select your country",
 
   // Question Eight Screen
   "lbl_write_here": "Write here..",
@@ -70,9 +70,8 @@ final Map<String, String> enUs = {
   // Question Seven Screen
   "lbl_your_life_album": "Your Life Album",
   "lbl_your_way_album": "Your Way Album",
-  "msg_add_your_photos": "Add Your Photos In Albums",
-  "msg_min_add_2_photos":
-      "Min. add 2 photos to start. Add 3 photo to make your profile Stand Out",
+  "msg_add_your_photos": "Add your photos in albums",
+  "msg_min_add_2_photos": "Min. add 2 photos to start.",
 
   // Filter One Screen
   "msg_create_an_itinerary":
@@ -86,22 +85,22 @@ final Map<String, String> enUs = {
   "msg_select_your_travel": "Select your Travel Start Date",
   "msg_select_your_travel2": "Select your Travel End Date",
   "msg_travel_plan_name": "Travel Plan Name",
-  "msg__my_travel_plan_name": "My Travel Plan",
+  "msg__my_travel_plan_name": "My Travel Plans",
 
   // Profile Two Screen
   "msg_upgrade_your_plans": "Upgrade your plans for chats",
 
   // Tooltips One Screen
-  "lbl_next": "Next", "msg_double_click_to": "Double Click to Like",
-  "msg_swipe_left_to_dislike": "Swipe Left to Dislike",
+  "lbl_next": "Next", "msg_double_click_to": "Double click to like",
+  "msg_swipe_left_to_dislike": "Swipe left to dislike",
 
   // Tooltips Screen
   "msg_let_s_get_started": " Let’s Get Started",
-  "msg_scroll_to_new_profile": "Scroll to New Profile",
-  "msg_swipe_right_to_view": "Swipe Right to view profile Details",
+  "msg_scroll_to_new_profile": "Scroll to new profile",
+  "msg_swipe_right_to_view": "Swipe right to view profile details",
 
   // Block proflie Screen
-  "lbl_optional": "Optional", "lbl_write_a_reason": "Write a Reason",
+  "lbl_optional": "Optional", "lbl_write_a_reason": "Write a reason",
 
   // Match Screen Three Screen
   "lbl_00_10s": " 00:10s",
@@ -121,15 +120,16 @@ final Map<String, String> enUs = {
   "lbl_tom_cooper": "Tom Cooper",
 
   // My Profile One Screen
-  "lbl_buy_gold_plan": "Buy Gold Plan",
+  "lbl_buy_gold_plan": "Buy Gold View",
 
   // Proflie Details_Edit_My Album One Screen
-  "lbl_my_life_album": "My Life Album", "lbl_my_way_album": "My Way Album",
+  "lbl_my_life_album": "My Life Album",
+  "lbl_my_way_album": "My Way Album",
 
   // Proflie Details_Personal Info Screen
   "lbl_mumbai_india": "Mumbai, India",
   "lbl_other_details": "Other Details",
-  "lbl_you_re_here_for": "You’re Here for",
+  "lbl_you_re_here_for": "You’re here for",
   "lbl_your_interest": "Your Interest",
   "msg_personal_details": "Personal Details",
 
@@ -142,15 +142,15 @@ final Map<String, String> enUs = {
   "msg_serious_relationship3": "Serious Relationship",
 
   // Proflie Details_Edit_My Album Three Screen
-  "msg_describe_about_you": "Describe About you Favorite Location",
+  "msg_describe_about_you": "Describe about you favorite location",
 
   // Proflie Details_Edit_My Album Two Screen
-  "msg_max_250_characters": "Max 250 Characters",
+  "msg_max_250_characters": "Max 250 characters",
 
   // Proflie Details_Edit_My Album Screen
   "lbl_edit": "Edit",
   "lbl_read_more": "Read More",
-  "msg_describe_about_your": "Describe About your Favorite Location",
+  "msg_describe_about_your": "Describe about your favorite location",
   "msg_lorem_ipsum_dolor6":
       "Lorem ipsum dolor sit amet consectetur. Odio egestas et diam vitae id dictum morbi bibendum ut. Tortor dignissim vulputate ullamcorper nullam fringilla iaculis volutpat. ... ",
 
@@ -162,7 +162,8 @@ final Map<String, String> enUs = {
   "msg_profile_progression": "Profile Progression",
 
   // Langauges Screen
-  "lbl_english": "English", "lbl_portuguese": "Portuguese",
+  "lbl_english": "English",
+  "lbl_portuguese": "Portuguese",
   "lbl_spanish": "Spanish",
 
   // Privacy and Policy Screen
@@ -181,7 +182,8 @@ final Map<String, String> enUs = {
   "msg_upgrade_your_plan": "Upgrade your plan",
 
   // My chats One Screen
-  "lbl_27_jan": "27 Jan", "msg_wonna_go_outside": "Wonna go  outside Someday?",
+  "lbl_27_jan": "27 Jan",
+  "msg_wonna_go_outside": "Wonna go  outside someday?",
 
   // Chat Screen
   "lbl_see_translation": "See Translation ",
@@ -221,7 +223,7 @@ final Map<String, String> enUs = {
   "lbl_09_00": "09:00",
   "lbl_10_45": "10:45",
   "lbl_12_20": "12:20",
-  "lbl_12_flights": "12 Flights",
+  "lbl_12_flights": "Flights",
   "lbl_15_50": "15:50",
   "lbl_22_00": "22:00",
   "lbl_250": "\$250",
@@ -237,10 +239,10 @@ final Map<String, String> enUs = {
   "msg_singapore_airlines": "Singapore Airlines",
 
   // Subscription Plans Screen
-  "lbl_platinum_plan": "Platinum Plan",
+  "lbl_platinum_plan": "Platinum Push",
 
   // Subscription Plans - Tab Container Screen
-  "lbl_platinum_plan2": "Platinum  Plan",
+  "lbl_platinum_plan2": "Platinum  Push",
 
   // Payment Two Screen
   "lbl3": "***",
@@ -258,15 +260,15 @@ final Map<String, String> enUs = {
   "msg_tom_cooper_sent": "Tom cooper sent message to you.",
 
   // my likes Screen
-  "msg_you_liked_john_smith": "You liked John smith Profile",
-  "msg_you_liked_kane_williamson": "You liked Kane Williamson Profile",
+  "msg_you_liked_john_smith": "You liked John smith profile",
+  "msg_you_liked_kane_williamson": "You liked Kane williamson profile",
   "msg_you_sent_message": "You sent message to Tom cooper.",
 
   // Likes Screen
   "lbl_my_likes": "My Likes",
   "msg_kane_williamson2": "Kane Williamson liked your photo",
   "msg_upgrade_your_plan2":
-      "Upgrade your plan to see people who already liked you",
+      "Increase your chances by updating your subscription",
 
   // empty state Screen
   "msg_if_you_want_to_enhance":
@@ -313,7 +315,7 @@ final Map<String, String> enUs = {
   "lbl_24": "24",
   "lbl_24_jan": "24 Jan",
   "lbl_2_days_ago": "2 days ago",
-  "lbl_2_km_away": "2 Km Away",
+  "lbl_2_km_away": " Km Away",
   "lbl_30": "\$ 30",
   "lbl_302": "30%",
   "lbl_30_save": "30% Save",
@@ -354,7 +356,7 @@ final Map<String, String> enUs = {
   "lbl_gym_fitness": "Gym & Fitness",
   "lbl_help_support": "Help & Support",
   "lbl_here_for": "Here for",
-  "lbl_i_don_t_know": "I don’t Know",
+  "lbl_i_don_t_know": "I don’t know",
   "lbl_india": "India",
   "lbl_interested_in": "Interested In",
   "lbl_interests": "Interests",
@@ -404,14 +406,14 @@ final Map<String, String> enUs = {
   "lbl_tell_me": "Tell me",
   "lbl_theresa_webb": "Theresa Webb",
   "lbl_today": "Today",
-  "lbl_unlimited_likes": "Unlimited Likes",
+  "lbl_unlimited_likes": "Unlimited likes",
   "lbl_us_trip": "US Trip",
   "lbl_verification": "Verification",
   "lbl_version_0_011": "Version :0.011",
   "lbl_view_details": "View Details",
   "lbl_viewed_profile": "Viewed Profile",
   "lbl_voice_recording": "Voice Recording",
-  "lbl_way_album": "Way album",
+  "lbl_way_album": "Way Album",
   "lbl_woman": "Woman",
   "lbl_writing": "Writing",
   "lbl_yesterday": "Yesterday",
@@ -419,12 +421,12 @@ final Map<String, String> enUs = {
   "lbl_your_name": "Your Name",
   "lbl_your_password": "Your Password",
   "msg_24_feb_2024_12": "24 Feb 2024 - 12 Mar 2024",
-  "msg_25_chances_to_message": "25 Chances to message unmatched Profile",
-  "msg_35_profile_completed": "35% Profile Completed",
+  "msg_25_chances_to_message": "25 chances to message unmatched profile",
+  "msg_35_profile_completed": "% Profile Completed",
   "msg_abc123_gmail_com": "Abc123@gmail.com",
-  "msg_abc_gmail_com": " Please check you Email",
+  "msg_abc_gmail_com": " Please check you email",
   "msg_about_my_favorite": "About My Favorite Location",
-  "msg_add_your_other_available": "Add your other available location",
+  "msg_add_your_other_available": "Choose the location you want to search",
   "msg_available_locations": "Available Locations",
   "msg_awesome_bro_let_s": "Awesome Bro!! Let’s do it.",
   "msg_buy_platinum_plan": "Buy Platinum Push",
@@ -436,14 +438,14 @@ final Map<String, String> enUs = {
   "msg_creditcard_debitcard": "Creditcard/Debitcard",
   "msg_culture_learning": "Culture Learning Exchange",
   "msg_darlene_robertson": "Darlene Robertson",
-  "msg_describe_a_things": "Describe a Things You really like to do",
-  "msg_describe_a_things2": "Describe a Things I love about my culture",
-  "msg_describe_what_kind": "Describe What kind of person You are.",
+  "msg_describe_a_things": "Describe a things you really like to do",
+  "msg_describe_a_things2": "Describe a things I love about my culture",
+  "msg_describe_what_kind": "Describe what kind of person you are.",
   "msg_describe_your_hobbies":
-      "Describe your hobbies and activities that you like to participate in.",
+      "Describe your hobbies and activities that I like to enjoy",
   "msg_enter_new_password": "Enter New Password",
   "msg_forgot_password": "Forgot Password ?",
-  "msg_full_access_user": "Full Access User Profile Access",
+  "msg_full_access_user": "Full access user profile access",
   "msg_great_your_thermometer":
       "Great !!, Your thermometer is getting overheated and may explode.",
   "msg_hi_how_s_going": "Hi, How’s going on?",
@@ -452,7 +454,7 @@ final Map<String, String> enUs = {
   "msg_inappropriate_behavior": "Inappropriate Behavior",
   "msg_john_smith_viewd2": "John smith Viewd your Profile",
   "msg_johnsmith_gmail_com": "johnsmith@gmail.com",
-  "msg_limited_user_profile": "Limited User profile Details Access",
+  "msg_limited_user_profile": "Limited user profile details access",
   "msg_lorem_ipsum_dolor":
       "Lorem ipsum dolor sit amet consectetur. Odio egestas et diam vitae id dictum morbi bibendum ut. Tortor dignissim vulputate ullamcorper nullam fringilla iaculis volutpat. Amet massa volutpat non tempor. Dui blandit porttitor gravida sagittis magnis in sit amet.\nA in nibh egestas diam pharetra sit varius id.",
   "msg_lorem_ipsum_dolor2":
@@ -470,15 +472,14 @@ final Map<String, String> enUs = {
       "Lorem ipsum dolor sit amet consectetur. Diam adipiscing consectetur in vitae vulputate. Scelerisque congue est adipiscing tristique ",
   "msg_my_hobbies_and_activities":
       "My hobbies and activities that you like to participate in.",
-  "msg_otp_will_expire": "OTP Will Expire in 01:30",
-  "msg_otp_will_expire2": "OTP Will Expire in ",
-  "msg_please_wait_for":
-      " Please wait for a moment until we can find someone to match with you.",
-  "msg_push_your_profile": "Push your Profile",
+  "msg_otp_will_expire": "OTP will expire in 01:30",
+  "msg_otp_will_expire2": "OTP will expire in ",
+  "msg_please_wait_for": " Who you like is about to be LIVE on the call ",
+  "msg_push_your_profile": "Push your profile",
   "msg_re_enter_new_password": "Re-Enter New Password",
   "msg_re_enter_new_password2": "Re-Enter New  Password",
-  "msg_see_who_likes_you": "See Who likes you",
-  "msg_select_reason_why": "Select Reason Why you want to block John’s Profile",
+  "msg_see_who_likes_you": "See who likes you",
+  "msg_select_reason_why": "Select reason why you want to block",
   "msg_select_your_interest": "Select Your Interest",
   "msg_select_your_interests":
       "Select your interests to match with users who have similar ones.",
@@ -501,22 +502,23 @@ final Map<String, String> enUs = {
   "msg_we_have_sent_otp2": "We have sent OTP in ",
   "msg_well_it_s_good_but": "Well it’s Good but you know about that 😄 ",
   "msg_what_do_you_think": "What do you Think?",
-  "msg_what_do_you_want": "What do you want to find out?",
+  "msg_what_do_you_want": "What are you interested in ?",
   "msg_what_is_your_gender": "What is your gender?",
   "msg_what_kind_of_person": "What kind of person I am.",
   "msg_what_s_going_on": "What's going on?",
   "msg_when_were_you_born": "When were you born?",
-  "msg_where_are_you_from": "Where are you From?",
+  "msg_where_are_you_from": "Where are you from?",
   "msg_your_travel_plan": "Your Travel Plan",
   "lbl_read_less": "Read Less",
   //"msg_your_new_password":"Your New Password"
 // Network Error String
   "msg_network_err": "Network Error",
-  "msg_something_went_wrong": "Something Went Wrong!",
+  "msg_something_went_wrong": "Something went wrong!",
 
   // Validation Error String
   "err_msg_please_enter_valid_email": "Please enter valid email",
-  "err_msg_please_enter_valid_password": "Please enter valid password",
+  "err_msg_please_enter_valid_password":
+      "Password must have at least one uppercase,one lowercase, one digit, one special character, be 8 characters long, and no spaces.",
   "err_msg_please_enter_valid_text": "Please enter valid text",
   "err_msg_password_not_match": "Password does't match",
   "error_msg_wrong_otp": "Worong otp",
@@ -525,13 +527,144 @@ final Map<String, String> enUs = {
 
   //Additional
   "Your_otp_for_mifever": "Your otp for MiFever verification is",
-  "lbl_resend": "Resned",
+  "lbl_resend": "Resend",
   "lbl_you_blocked_by": 'You blocked by',
-  "lbl_no_match": "No compatible match found.",
+
+  "lbl_you_blocked": 'You blocked',
+  "lbl_want_to": 'want to',
+
+  "lbl_no_match": "No profiles in your area",
   "lbl_adjust_filter":
       "Let's adjust the filter criteria, there might be a suitable match waiting",
   "lbl_filter_your_profile": "Filter Your Profile",
-  "lbl_enter_location": 'Enter Lcation',
+  "lbl_enter_location": 'Enter Location',
   "lbl_liked_your_profile": "liked your profile",
-  "lbl_viewed_your_profile": "liked viewed your profile",
+  "lbl_viewed_your_profile": "viewed your profile",
+  "lbl_send_message_to_you": "send message to you",
+  "lbl_you_viewed": 'You viewed',
+  "lbl_profile": "profile",
+  "lbl_you_sent_message": 'You sent message to',
+  "lbl_you_liked": "You liked",
+  "lbl_thermometer_is_a":
+      'Thermometer is a unique way of showing interest between two profiles. If someone sees your profile just for 10 seconds then the bar will rise.',
+  "lbl_how_thermometer_works": "How Themometer Works",
+  "lbl_in_my": "Things I really like to do",
+  //"In my free time, I love to...",
+  "lbl_abut_culture": 'Things I love about my culture',
+  //"What I like about my culture",
+  'lbl_fav_location': "What kind of person I am",
+  //"My favorite location to visit",
+  "lbl_end_date_must": "End date must be grater than start date",
+  "lbl_create_an_itinerary":
+      "Create an itinerary and get a customized profile using your location and schedule.",
+  "lbl_enter_text_here": "Enter text here...",
+  "lbl_get_platinum_push": "Get platinum push for more exciting features.",
+  "lbl_get_your_gold": "Get your gold view, now!",
+  "lbl_about_city":
+      "In the heart of Japan's bustling metropolis, Tokyo's neon lights paint a vibrant portrait. From tranquil gardens to bustling streets, Each corner whispers tales of ancient tradition and modern innovation. Embark on a journey through Tokyo's dynamic landscape, where every moment is an invitation to explore the extraordinary.",
+  "lbl_email_already_use": "Email already in use",
+  'lbl_my_fav_location_in_home_country':
+      'My favorite location in my home country',
+  'lbl_hobbies_and_activity': "Hobbies and activities I like to enjoy",
+  'lbl_info': 'Info',
+  'lbl_upgrade_plan_for_chat': "Upgrade your plans for chats",
+  'lbl_text_tries': 'Texting Tries',
+  'lbl_according_to_plan':
+      'Increase your chances by initiating conversations, even without a match.',
+  'lbl_chances': 'Chances',
+  'lbl_chat': 'Chat',
+  'lbl_you_have_not': "You haven't matched anyone's profile.",
+  'lbl_keep_scrolling_be_matched':
+      'Please keep scrolling and may be matched anyone’s profile.',
+  'lbl_your_profile_matched': 'Your profile has been matched with',
+  'lbl_album': 'Album',
+  'lbl_gallery': 'Gallery',
+  'lbl_this_user_not': 'This sender is not in your match list',
+  'lbl_block': 'Block',
+  'lbl_matches': 'Matches',
+  'lbl_community_guidelines': 'Community Guidelines',
+
+  // error text
+  'err_msg_please_enter_valid_name': 'Please enter valid name',
+  'err_msg_please_enter_location': 'Please enter location',
+  'err_msg_please_enter_plan_name': 'Please enter plan name',
+  'translating_to_your': 'Translating to your preferred language.',
+  'lbl_are_you_sure_want_to_report': 'Are you sure want to report',
+  'lbl_are_you_sure_want_to_unmatch': 'Are you sure want to unmatch',
+  'lbl_are_you_sure_want_to_delete_account':
+      'Are you sure want to delete account ?',
+  'lbl_people_whom': 'People whom you have matched with will appear here.',
+  'lbl_height': 'Height',
+  'lbl_horoscope': 'Horoscope',
+  'lbl_smokingOrNonSmoking': 'Smoking or Non - Smoking',
+  'lbl_drinkerOrNonDrinker': 'Drinker or Non - Drinker',
+  'lbl_religion': 'Religion',
+  'lbl_maritalStatus': 'Marital Status',
+  'lbl_children': 'Children',
+  'lbl_naturalHairColor': 'Natural Hair Color',
+  'lbl_musicpreference': 'Music Preference',
+  'lbl_aries': 'Aries',
+  'lbl_taurus': 'Taurus',
+  'lbl_gemini': 'Gemini',
+  'lbl_cancer': 'Cancer',
+  'lbl_leo': 'Leo',
+  'lbl_virgo': 'Virgo',
+  'lbl_libra': 'Libra',
+  'lbl_scorpio': 'Scorpio',
+  'lbl_sagittarius': 'Sagittarius',
+  'lbl_capricorn': 'Capricorn',
+  'lbl_aquarius': 'Aquarius',
+  'lbl_pisces': 'Pisces',
+  'lbl_drinker': 'Drinker',
+  'lbl_nondrinker': 'Non Drinker',
+  'lbl_socialdrinker': 'Social Drinker',
+  'lbl_smoking': 'Smoking',
+  'lbl_nonsmoking': 'Non Smoking',
+  'lbl_socialsmoking': 'Social Smoking',
+  'lbl_christianity': 'Christianity',
+  'lbl_islam': 'Islam',
+  'lbl_judaism': 'Judaism',
+  'lbl_hinduism': 'Hinduism',
+  'lbl_buddhism': 'Buddhism',
+  'lbl_sikhism': 'Sikhism',
+  'lbl_jainism': 'Jainism',
+  'lbl_otherreligion': 'Other',
+  'lbl_yes': 'Yes',
+  // 'lbl_no': 'No',
+  'lbl_brown': 'Brown',
+  'lbl_black': 'Black',
+  'lbl_blonde': 'Blonde',
+  'lbl_red': 'Red',
+  'lbl_otherhaircolor': 'Other',
+  'lbl_pop': 'Pop',
+  'lbl_rock': 'Rock',
+  'lbl_hiphoprap': 'Hip-Hop/Rap',
+  'lbl_electronicdance': 'Electronic/Dance',
+  'lbl_classical': 'Classical',
+  'lbl_jazz': 'Jazz',
+  // 'lbl_country': 'Country',
+  'lbl_metal': 'Metal',
+  'lbl_rbsoul': 'R&B / Soul',
+  'lbl_alternative': 'Alternative',
+  'lbl_indie': 'Indie',
+  'lbl_folk': 'Folk',
+  'lbl_reggae': 'Reggae',
+  'lbl_othermusic': 'Other',
+  'lbl_single': 'Single',
+  'lbl_married': 'Married',
+  'lbl_divorced': 'Divorced',
+  'lbl_widowed': 'Widowed',
+  'lbl_separated': 'Separated',
+
+  'lbl_someday': 'Some day',
+  'lbl_enter_your_height': 'Enter Your Height',
+  'err_msg_please_enter_valid_height': 'Please enter valid height',
+  'lbl_advance_filters': 'Advanced Filters',
+  'lbl_due_to_policy_violation':
+      'Due to policy violation you have been blocked. Please email at contact@mifever.com for support.',
+  'lbl_error_subscription':
+      'Upgrade to unlock premium feature and enjoy uninterrupted audio steaming',
+  'lbl_no_notifications': 'No Notifications at this moment.',
+  'lbl_delete_account': "Delete account",
+  'lbl_upgrade_your_plan': 'Upgrade your plan'
 };

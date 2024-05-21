@@ -3,7 +3,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mifever/core/app_export.dart';
+import 'package:mifever/core/utils/progress_dialog_utils.dart';
+import 'package:mifever/data/models/report/report_model.dart';
 import 'package:mifever/data/models/user/user_model.dart';
 import 'package:mifever/data/sevices/firebase_services.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
@@ -12,9 +15,17 @@ import 'package:mifever/widgets/app_bar/custom_app_bar.dart';
 import 'package:mifever/widgets/custom_icon_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../data/models/thermometer_model/thermometer_model.dart';
+import '../../data/sevices/firebase_analytics_service/firebase_analytics_service.dart';
 import '../../data/sevices/media_services/audio_services.dart';
+import '../../widgets/custom_bottom_bar.dart';
+import '../../widgets/custom_elevated_button.dart';
 import '../../widgets/custom_outlined_button.dart';
 import '../about_me_page/models/describeathings_item_model.dart';
+import '../chat_screen/chat_screen.dart';
+import '../my_profile_screen/models/frame7_item_model.dart';
+import '../personal_info_page/models/adition_details_model.dart';
+import '../text_tries/text_tries.dart';
 import 'controller/profile_controller.dart';
 import 'widgets/carousel_item_widget.dart';
 import 'widgets/frametwentythree_item_widget.dart';
@@ -27,6 +38,8 @@ class ProfileScreen extends GetWidget<ProfileController> {
   @override
   Widget build(BuildContext context) {
     controller.addThermometer(id);
+    controller.getLikeData(id);
+    controller.checkIsMatched(id);
     return SafeArea(
       child: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseServices.getUserById(id),
@@ -37,148 +50,583 @@ class ProfileScreen extends GetWidget<ProfileController> {
             var data = snapshot.data;
             UserModel user =
                 UserModel.fromJson(data!.data() as Map<String, dynamic>);
+
+            controller.translate(user);
+
             return Scaffold(
-              appBar: _buildAppBar(user),
-              body: SizedBox(
-                width: SizeUtils.width,
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(top: 24.v),
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 5.v),
-                    child: Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 20.h),
-                            child: Obx(
-                              () => Row(
-                                children: [
-                                  CustomOutlinedButton(
-                                    height: 36.v,
-                                    width: 105.h,
-                                    text: "lbl_way_album".tr,
-                                    buttonStyle: controller.isWayAlbum.value
-                                        ? CustomButtonStyles.fillRedATL18
-                                        : CustomButtonStyles.outlineGray,
-                                    buttonTextStyle: controller.isWayAlbum.value
-                                        ? CustomTextStyles.titleSmallPrimary
-                                        : CustomTextStyles.titleSmallGray60004,
-                                    onPressed: () {
-                                      controller.isWayAlbum.value = true;
-                                    },
-                                  ),
-                                  CustomOutlinedButton(
-                                    width: 102.h,
-                                    text: "lbl_life_album".tr,
-                                    buttonTextStyle: !controller
-                                            .isWayAlbum.value
-                                        ? CustomTextStyles.titleSmallPrimary
-                                        : CustomTextStyles.titleSmallGray60004,
-                                    margin: EdgeInsets.only(left: 12.h),
-                                    buttonStyle: !controller.isWayAlbum.value
-                                        ? CustomButtonStyles.fillRedATL18
-                                        : CustomButtonStyles.outlineGray,
-                                    onPressed: () {
-                                      controller.isWayAlbum.value = false;
-                                    },
-                                  ),
-                                ],
+                appBar: PreferredSize(
+                    preferredSize: Size(SizeUtils.width, 56.v),
+                    child: _buildAppBar(user)),
+                body: SizedBox(
+                  width: SizeUtils.width,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(top: 24.v),
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 5.v),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 20.h),
+                              child: Obx(
+                                () => Row(
+                                  children: [
+                                    CustomOutlinedButton(
+                                      height: 36.v,
+                                      width: 135.h,
+                                      text: "lbl_way_album".tr,
+                                      buttonStyle: controller.isWayAlbum.value
+                                          ? CustomButtonStyles.fillRedATL18
+                                          : CustomButtonStyles.outlineGray,
+                                      buttonTextStyle: controller
+                                              .isWayAlbum.value
+                                          ? CustomTextStyles.titleSmallPrimary
+                                          : CustomTextStyles
+                                              .titleSmallGray60004,
+                                      onPressed: () {
+                                        controller.isWayAlbum.value = true;
+                                      },
+                                    ),
+                                    CustomOutlinedButton(
+                                      width: 135.h.h,
+                                      text: "lbl_life_album".tr,
+                                      buttonTextStyle: !controller
+                                              .isWayAlbum.value
+                                          ? CustomTextStyles.titleSmallPrimary
+                                          : CustomTextStyles
+                                              .titleSmallGray60004,
+                                      margin: EdgeInsets.only(left: 12.h),
+                                      buttonStyle: !controller.isWayAlbum.value
+                                          ? CustomButtonStyles.fillRedATL18
+                                          : CustomButtonStyles.outlineGray,
+                                      onPressed: () {
+                                        controller.isWayAlbum.value = false;
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 16.v),
-                        Obx(() => _buildCarouselSlider(
-                              controller.isWayAlbum.value
-                                  ? user.wayAlbum ?? []
-                                  : user.lifeAlbum ?? [],
-                            )),
-                        SizedBox(height: 16.v),
-                        Obx(
-                          () => SizedBox(
-                            height: 6.v,
-                            child: AnimatedSmoothIndicator(
-                              activeIndex: controller.sliderIndex.value,
-                              count: user.wayAlbum?.length ?? 0,
-                              axisDirection: Axis.horizontal,
-                              effect: ScrollingDotsEffect(
-                                spacing: 4,
-                                activeDotColor:
-                                    theme.colorScheme.onPrimary.withOpacity(1),
-                                dotColor: appTheme.gray200,
-                                dotHeight: 6.v,
-                                dotWidth: 6.h,
+                          SizedBox(height: 16.v),
+                          Obx(() => _buildCarouselSlider(
+                                controller.isWayAlbum.value
+                                    ? user.wayAlbum ?? []
+                                    : user.lifeAlbum ?? [],
+                              )),
+                          SizedBox(height: 16.v),
+                          Obx(
+                            () => SizedBox(
+                              height: 6.v,
+                              child: AnimatedSmoothIndicator(
+                                activeIndex: controller.sliderIndex.value,
+                                count: user.wayAlbum?.length ?? 0,
+                                axisDirection: Axis.horizontal,
+                                effect: ScrollingDotsEffect(
+                                  spacing: 4,
+                                  activeDotColor: theme.colorScheme.onPrimary
+                                      .withOpacity(1),
+                                  dotColor: appTheme.gray200,
+                                  dotHeight: 6.v,
+                                  dotWidth: 6.h,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(height: 24.v),
-                        _buildVoiceRecording(user),
-                        _buildInterests(user),
-                        _buildQuestionAnswer(
-                          aboutMyFavorite: "lbl_here_for".tr,
-                          loremIpsumDolor: user.whatDoYouWant.toString().tr,
-                        ),
-                        _buildAvailableLocation(user),
-                        _buildAboutMe(user),
-                      ],
+                          SizedBox(height: 24.v),
+                          _buildVoiceRecording(user),
+                          _buildInterests(user),
+                          Obx(
+                            () => _buildQuestionAnswer(
+                              aboutMyFavorite: "lbl_here_for".tr,
+                              loremIpsumDolor: controller.isConverted.value
+                                  ? controller.convertedHereFor.value
+                                  : user.whatDoYouWant.toString().tr,
+                            ),
+                          ),
+                          _buildAvailableLocation(user),
+                          ...List.generate(9, (index) {
+                            List<AdditionalDetailsWidgetModel>
+                                additionalDetailsList =
+                                <AdditionalDetailsWidgetModel>[
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_height'.tr,
+                                key: 'height',
+                                value: user.additionalPersonalInfo?.height !=
+                                        null
+                                    ? '${user.additionalPersonalInfo?.height} cm'
+                                    : '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_horoscope'.tr,
+                                key: 'horoscope',
+                                value: user.additionalPersonalInfo?.horoscope ??
+                                    '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_smokingOrNonSmoking'.tr,
+                                key: 'smokingStatus',
+                                value: user.additionalPersonalInfo
+                                        ?.smokingStatus ??
+                                    '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_drinkerOrNonDrinker'.tr,
+                                key: 'drinkingStatus',
+                                value: user.additionalPersonalInfo
+                                        ?.drinkingStatus ??
+                                    '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_religion'.tr,
+                                key: 'religion',
+                                value:
+                                    user.additionalPersonalInfo?.religion ?? '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_maritalStatus'.tr,
+                                key: 'maritalStatus',
+                                value: user.additionalPersonalInfo
+                                        ?.maritalStatus ??
+                                    '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_children'.tr,
+                                key: 'children',
+                                value:
+                                    user.additionalPersonalInfo?.children ?? '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_naturalHairColor'.tr,
+                                key: 'naturalHairColor',
+                                value: user.additionalPersonalInfo
+                                        ?.naturalHairColor ??
+                                    '',
+                              ),
+                              AdditionalDetailsWidgetModel(
+                                label: 'lbl_musicpreference'.tr,
+                                key: 'musicPreference',
+                                value: user.additionalPersonalInfo
+                                        ?.musicPreference ??
+                                    '',
+                              ),
+                            ];
+                            return _buildFrame(
+                                onTap: () {},
+                                value: additionalDetailsList[index].value,
+                                key: additionalDetailsList[index].key,
+                                label: additionalDetailsList[index].label);
+                          }),
+                          _buildAboutMe(user),
+                          SizedBox(height: 20.h),
+                          Padding(
+                            padding: EdgeInsets.only(left: 20.h, top: 20.h),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'lbl_about_me'.tr,
+                                style: CustomTextStyles
+                                    .titleMediumGray900ExtraBold,
+                              ),
+                            ),
+                          ),
+                          _buildAboutMe1(user),
+                          SizedBox(height: 120.h),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            );
+                bottomSheet: Obx(
+                  () => controller.isMatched.value
+                      ? SizedBox()
+                      : int.parse(controller.textTries.value) > 0
+                          ? _buildChat()
+                          : _buildUpgradePlan(),
+                ));
           }),
     );
   }
 
   /// Section Widget
-  PreferredSizeWidget _buildAppBar(UserModel user) {
-    return CustomAppBar(
-      leadingWidth: 40.h,
-      leading: AppbarLeadingImage(
-        onTap: () {
-          Get.back();
-        },
-        imagePath: ImageConstant.imgArrowLeft02SharpGray90024x24,
-        margin: EdgeInsets.only(
-          left: 16.h,
-          top: 16.v,
-          bottom: 16.v,
-        ),
+  Widget _buildAboutMe1(UserModel _user) {
+    Rx<List<DescribeathingsItemModel>> describeathingsItemList = Rx([
+      DescribeathingsItemModel(
+          question: "lbl_my_fav_location_in_home_country".tr.obs,
+          answer: _user.aboutMe?.whatKindPerson.obs,
+          key: 'whatKindPerson'.obs),
+      DescribeathingsItemModel(
+        question: "lbl_hobbies_and_activity".tr.obs,
+        answer: _user.aboutMe?.hobbiesAndActivity.obs,
+        key: 'hobbiesAndActivity'.obs,
       ),
-      title: AppbarSubtitle(
-        text: user.name.toString().capitalize ?? '',
-        //"lbl_amy_johns_25".tr,
-        margin: EdgeInsets.only(left: 12.h),
+    ]);
+    Rx<List<DescribeathingsItemModel>> convertedAboutMe = Rx([
+      DescribeathingsItemModel(
+          question: "lbl_in_my".tr.obs,
+          answer: controller.convertedInMyFreeTime,
+          key: 'thingsYouLike'.obs),
+      DescribeathingsItemModel(
+        question: "lbl_abut_culture".tr.obs,
+        answer: controller.convertedAboutMyCulture,
+        key: 'aboutMyCulture'.obs,
       ),
-      actions: [
-        PopupMenuButton(
-          itemBuilder: (context) {
-            return [
-              PopupMenuItem(
-                  value: 'BLOCK',
-                  child: Text(
-                    'Block',
-                    style: CustomTextStyles.titleSmallGray60004,
-                  )),
-              PopupMenuItem(
-                  value: 'REPORT',
-                  child: Text(
-                    'Report',
-                    style: CustomTextStyles.titleSmallGray60004,
-                  )),
-            ];
-          },
-          onSelected: (val) {
-            if (val == 'BLOCK') {
-              Get.toNamed(AppRoutes.blockProflieScreen, arguments: [id]);
-            }
-          },
-        )
-      ],
-      styleType: Style.bgFill,
+      DescribeathingsItemModel(
+          question: "lbl_fav_location".tr.obs,
+          answer: controller.convertedFavLocation,
+          key: 'favLocation'.obs)
+    ]);
+    return Column(
+      children: List.generate(
+          describeathingsItemList.value.length,
+          (index) => Container(
+                //height: 160.v,
+                width: double.maxFinite,
+                padding: EdgeInsets.only(top: 1.v),
+                child: Stack(
+                  children: [
+                    Obx(
+                      () => _buildQuestionAnswer(
+                          aboutMyFavorite: describeathingsItemList
+                              .value[index].question!.value,
+                          loremIpsumDolor: controller.isConverted.value
+                              ? convertedAboutMe.value[index].answer!.value
+                              : describeathingsItemList
+                                  .value[index].answer!.value),
+                    ),
+                  ],
+                ),
+              )),
     );
+  }
+
+  Widget _buildFrame(
+      {required String value,
+      required String key,
+      required String label,
+      required VoidCallback onTap}) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(20.h),
+      decoration: AppDecoration.outlineRed50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: theme.textTheme.titleSmall!.copyWith(
+              color: appTheme.gray900,
+            ),
+          ),
+          Spacer(),
+          Row(
+            children: [
+              Text(
+                value,
+                style: theme.textTheme.titleSmall!.copyWith(
+                  color: appTheme.gray900,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildChat() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 20.v, horizontal: 20.v),
+      child: CustomElevatedButton(
+        onPressed: () async {
+          Get.off(() => ChatScreen(id));
+        },
+        text: "lbl_chat".tr,
+      ),
+    );
+  }
+
+  _buildUpgradePlan() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 20.v, horizontal: 20.v),
+      child: CustomElevatedButton(
+        leftIcon: CustomImageView(
+            margin: EdgeInsets.all(5.v), imagePath: ImageConstant.imgGroup25),
+        onPressed: () {
+          Get.off(() => TextTriesPage());
+        },
+        text: "lbl_upgrade_plan_for_chat".tr,
+        //margin: EdgeInsets.only(left: 14.h),
+      ),
+    );
+  }
+
+  /// Section Widget
+  _buildAppBar(UserModel user) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseServices.getBlockUser(id),
+        builder: (context, blockSnapshot) {
+          if (blockSnapshot.connectionState == ConnectionState.waiting) {
+            return SizedBox.shrink();
+          }
+          var blockSnapshotData = blockSnapshot.data!.docs;
+          String docId = '';
+          for (var doc in blockSnapshotData) {
+            docId = doc.id;
+          }
+          bool _isBlockedByMe = blockSnapshotData.isNotEmpty;
+
+          return CustomAppBar(
+            leadingWidth: 40.h,
+            leading: AppbarLeadingImage(
+              onTap: () {
+                Get.back();
+              },
+              imagePath: ImageConstant.imgArrowLeft02SharpGray90024x24,
+              margin: EdgeInsets.only(
+                left: 16.h,
+                top: 16.v,
+                bottom: 16.v,
+              ),
+            ),
+            title: AppbarSubtitle(
+              text: user.name.toString(),
+              //"lbl_amy_johns_25".tr,
+              margin: EdgeInsets.only(left: 12.h),
+            ),
+            actions: [
+              PopupMenuButton(
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                        value: 'BLOCK',
+                        child: Text(
+                          _isBlockedByMe ? 'Unblock' : 'Block',
+                          style: CustomTextStyles.titleSmallGray60004,
+                        )),
+                    PopupMenuItem(
+                        value: 'REPORT',
+                        child: Text(
+                          'Report',
+                          style: CustomTextStyles.titleSmallGray60004,
+                        )),
+                    PopupMenuItem(
+                        value: 'TRANSLATE',
+                        child: Text(
+                          controller.isConverted.value
+                              ? 'See Original'
+                              : 'Translate',
+                          style: CustomTextStyles.titleSmallGray60004,
+                        )),
+                    if (controller.likeData.value.roomId != null &&
+                        controller.likeData.value.isMatched == true &&
+                        controller.likeData.value.isDeleted != true)
+                      PopupMenuItem(
+                          value: 'REMOVE',
+                          child: Text(
+                            'Unmatch',
+                            style: CustomTextStyles.titleSmallGray60004,
+                          )),
+                  ];
+                },
+                onSelected: (val) async {
+                  if (val == 'BLOCK') {
+                    if (_isBlockedByMe) {
+                      await FirebaseServices.unBlockUser(docId);
+                      Fluttertoast.showToast(msg: 'Unblocked');
+                      AnalyticsService.unBlocked(user.name ?? '');
+                    } else {
+                      Get.toNamed(AppRoutes.blockProflieScreen,
+                          arguments: [id, user.name]);
+                    }
+                  }
+                  if (val == 'REPORT') {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          contentPadding: EdgeInsets.all(10.h),
+                          title: Text(
+                              'lbl_are_you_sure_want_to_report'.tr +
+                                  ' ${user.name} ?',
+                              style: TextStyle(
+                                  fontSize: 18.fSize,
+                                  fontWeight: FontWeight.w400)),
+                          actions: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                      shape: RoundedRectangleBorder()),
+                                  onPressed: () {
+                                    Get.back();
+                                  },
+                                  child: Text(
+                                    'No',
+                                    style: TextStyle(
+                                        color: appTheme.redA200,
+                                        fontSize: 15.fSize),
+                                  ),
+                                ),
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                      minimumSize: Size(100.v, 30.v),
+                                      backgroundColor: appTheme.redA200),
+                                  onPressed: () async {
+                                    ReportModel reportModel = ReportModel(
+                                        reportTo: user.id!,
+                                        roomId:
+                                            FirebaseServices.createChatRoomId(
+                                                user.id!),
+                                        reportBy: PrefUtils.getId(),
+                                        reason: '');
+                                    await FirebaseServices.reportUser(
+                                        reportModel);
+                                    Fluttertoast.showToast(msg: 'Success');
+                                    ThermometerModel thermometerModel =
+                                        ThermometerModel(
+                                      timestamp: DateTime.now().toString(),
+                                      roomId:
+                                          FirebaseServices.createChatRoomId(id),
+                                      userIds: [id, PrefUtils.getId()],
+                                      percentageValue: 0,
+                                    );
+                                    await FirebaseServices.addThermometerValue(
+                                        thermometerModel);
+                                    AnalyticsService.report(user.name ?? '');
+                                    Get.back();
+                                  },
+                                  child: Text(
+                                    'Yes',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      },
+                    );
+
+                    // Get.defaultDialog(
+                    //   contentPadding:
+                    //       EdgeInsets.symmetric(horizontal: 10.h, vertical: 2),
+                    //   title: 'lbl_are_you_sure_want_to_report'.tr +
+                    //       ' ${user.name} ?',
+                    //   titleStyle: TextStyle(
+                    //       fontSize: 18.fSize, fontWeight: FontWeight.w400),
+                    //   middleText: '',
+                    //   actions: <Widget>[
+                    //     TextButton(
+                    //       style: TextButton.styleFrom(
+                    //           padding: EdgeInsets.only(right: 50.v),
+                    //           shape: RoundedRectangleBorder()),
+                    //       onPressed: () {
+                    //         Get.back();
+                    //       },
+                    //       child: Text(
+                    //         'No',
+                    //         style: TextStyle(
+                    //             color: appTheme.redA200, fontSize: 15.fSize),
+                    //       ),
+                    //     ),
+                    //     TextButton(
+                    //       style: TextButton.styleFrom(
+                    //           minimumSize: Size(100.v, 30.v),
+                    //           backgroundColor: appTheme.redA200),
+                    //       onPressed: () async {
+                    //         ReportModel reportModel = ReportModel(
+                    //             reportTo: user.id!,
+                    //             roomId:
+                    //                 FirebaseServices.createChatRoomId(user.id!),
+                    //             reportBy: PrefUtils.getId(),
+                    //             reason: '');
+                    //         await FirebaseServices.reportUser(reportModel);
+                    //         Fluttertoast.showToast(msg: 'Success');
+                    //         ThermometerModel thermometerModel =
+                    //             ThermometerModel(
+                    //           timestamp: DateTime.now().toString(),
+                    //           roomId: FirebaseServices.createChatRoomId(id),
+                    //           userIds: [id, PrefUtils.getId()],
+                    //           percentageValue: 0,
+                    //         );
+                    //         await FirebaseServices.addThermometerValue(
+                    //             thermometerModel);
+
+                    //         Get.back();
+                    //       },
+                    //       child: Text(
+                    //         'Yes',
+                    //       ),
+                    //     ),
+                    //   ],
+                    // );
+                  }
+                  if (val == 'TRANSLATE') {
+                    if (!controller.isConverted.value) {
+                      Fluttertoast.showToast(msg: 'translating_to_your'.tr);
+                    }
+                    controller.isConverted.value =
+                        !controller.isConverted.value;
+                  }
+                  if (val == 'REMOVE') {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          //contentPadding: EdgeInsets.all(0.h),
+                          title: Text(
+                              'lbl_are_you_sure_want_to_unmatch'.tr +
+                                  ' ${user.name} ?',
+                              style: TextStyle(
+                                  fontSize: 16.fSize,
+                                  fontWeight: FontWeight.w400)),
+                          actions: <Widget>[
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                  padding: EdgeInsets.only(right: 50.v),
+                                  shape: RoundedRectangleBorder()),
+                              onPressed: () {
+                                Get.back();
+                              },
+                              child: Text(
+                                'No',
+                                style: TextStyle(
+                                    color: appTheme.redA200,
+                                    fontSize: 15.fSize),
+                              ),
+                            ),
+                            TextButton(
+                              style: TextButton.styleFrom(
+                                  minimumSize: Size(100.v, 30.v),
+                                  backgroundColor: appTheme.redA200),
+                              onPressed: () async {
+                                ProgressDialogUtils.showProgressDialog();
+                                await FirebaseServices.doUnMatch(id);
+                                ProgressDialogUtils.hideProgressDialog();
+                                final controller =
+                                    Get.find<CustomBottomBarController>();
+                                controller.selectedIndex.value = 2;
+                                AnalyticsService.unMatch(user.name ?? '');
+                                Get.off(() => CustomBottomBar());
+                              },
+                              child: Text(
+                                'Yes',
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+              )
+            ],
+            styleType: Style.bgFill,
+          );
+        });
   }
 
   /// Section Widget
@@ -210,6 +658,7 @@ class ProfileScreen extends GetWidget<ProfileController> {
   /// Section Widget
   Widget _buildVoiceRecording(UserModel user) {
     return Stack(
+      alignment: Alignment.center,
       children: [
         Container(
           padding: EdgeInsets.fromLTRB(20.h, 24.v, 20.h, 22.v),
@@ -280,12 +729,17 @@ class ProfileScreen extends GetWidget<ProfileController> {
                               padding: EdgeInsets.only(left: 12.h),
                               child: CustomIconButton(
                                 onTap: () {
-                                  controller.progress.value = 0.0;
-                                  controller.isPlaying.value = true;
-                                  VoiceRecorderController.playAudio(
-                                          user.nameAudio ?? '')
-                                      .then((value) => VoiceRecorderController
-                                          .audioPosition.value = 0);
+                                  if (isHide()) {
+                                    Fluttertoast.showToast(
+                                        msg: 'lbl_error_subscription'.tr);
+                                  } else {
+                                    controller.progress.value = 0.0;
+                                    controller.isPlaying.value = true;
+                                    VoiceRecorderController.playAudio(
+                                            user.nameAudio ?? '')
+                                        .then((value) => VoiceRecorderController
+                                            .audioPosition.value = 0);
+                                  }
                                 },
                                 height: 30.adaptSize,
                                 width: 30.adaptSize,
@@ -307,26 +761,6 @@ class ProfileScreen extends GetWidget<ProfileController> {
                           ],
                         ),
                       ),
-                      Visibility(
-                        visible: false,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 147.h,
-                              vertical: 7.v,
-                            ),
-                            decoration: AppDecoration.fillPrimary2.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder4,
-                            ),
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgClose,
-                              height: 40.adaptSize,
-                              width: 40.adaptSize,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -334,28 +768,55 @@ class ProfileScreen extends GetWidget<ProfileController> {
             ],
           ),
         ),
-        Obx(
-          () => Visibility(
-            visible: PrefUtils.getUserGender() == 'Female' ||
-                controller.planName.value.isEmpty,
-            child: Align(
-              alignment: Alignment.center,
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 167.h,
-                  vertical: 32.v,
-                ),
-                decoration: AppDecoration.fillPrimary1,
-                child: CustomImageView(
+        //_showSubscriptionBadge(padding: 30.v)
+      ],
+    );
+  }
+
+  bool isHide() {
+    if (PrefUtils.getUserGender() == 'Female') {
+      var item = controller.planName.value;
+      return false;
+    } else {
+      if (controller.planName.value == PlanType.Platinum.name) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+
+  Widget _showSubscriptionBadge({double? padding}) {
+    return Obx(
+      () => Visibility(
+        visible: isHide(),
+        child: InkWell(
+          onTap: () {
+            Get.toNamed(AppRoutes.subscriptionPlansScreen);
+          },
+          child: Container(
+            margin: EdgeInsets.only(top: padding ?? 50.v),
+            padding: EdgeInsets.symmetric(
+              horizontal: 167.h,
+              //vertical: 32.v,
+            ),
+            //color: Colors.red,
+            decoration: AppDecoration.fillPrimary1,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(height: padding != null ? 5.v : 35.v),
+                CustomImageView(
                   imagePath: ImageConstant.imgGroup25,
                   height: 40.adaptSize,
                   width: 40.adaptSize,
                 ),
-              ),
+                SizedBox(height: 30.v),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 
@@ -374,16 +835,20 @@ class ProfileScreen extends GetWidget<ProfileController> {
             style: CustomTextStyles.titleMediumGray900ExtraBold,
           ),
           SizedBox(height: 10.v),
-          Wrap(
-            runSpacing: 12.v,
-            spacing: 12.h,
-            children: List<Widget>.generate(
-              user.interestList?.length ?? 0,
-              (index) {
-                return InterestChipWidget(
-                  user.interestList?[index],
-                );
-              },
+          Obx(
+            () => Wrap(
+              runSpacing: 12.v,
+              spacing: 12.h,
+              children: List<Widget>.generate(
+                user.interestList?.length ?? 0,
+                (index) {
+                  return InterestChipWidget(
+                    controller.isConverted.value
+                        ? controller.convertedInterest[index]
+                        : user.interestList?[index],
+                  );
+                },
+              ),
             ),
           ),
         ],
@@ -410,10 +875,11 @@ class ProfileScreen extends GetWidget<ProfileController> {
             runSpacing: 12.v,
             spacing: 12.h,
             children: List<Widget>.generate(
-              user.availableCity?.length ?? 0,
+              user.availableLocation?.length ?? 0,
               (index) {
-                return _buildLocationChip(
-                    '${user.availableCity?[index]},${user.availableCountry?[index]}');
+                return _buildLocationChip(controller.isConverted.value
+                    ? controller.convertedAvailableLocation[index]
+                    : '${user.availableLocation?[index]}');
               },
             ),
           ),
@@ -457,65 +923,52 @@ class ProfileScreen extends GetWidget<ProfileController> {
   Widget _buildAboutMe(UserModel _user) {
     Rx<List<DescribeathingsItemModel>> aboutMe = Rx([
       DescribeathingsItemModel(
-          question: "Describe a Things You really like to do".obs,
+          question: "lbl_in_my".tr.obs,
           answer: _user.aboutMe?.thingsYouLike.obs,
           key: 'thingsYouLike'.obs),
       DescribeathingsItemModel(
-        question: "Describe a Things I love about my culture".obs,
+        question: "lbl_abut_culture".tr.obs,
         answer: _user.aboutMe?.aboutMyCulture.obs,
         key: 'aboutMyCulture'.obs,
       ),
       DescribeathingsItemModel(
-          question: "Describe What kind of person You are.".obs,
-          answer: _user.aboutMe?.whatKindPerson.obs,
-          key: 'whatKindPerson'.obs),
-      DescribeathingsItemModel(
-          question:
-              "Describe your hobbies and activities that you like to participate in."
-                  .obs,
-          answer: _user.aboutMe?.hobbiesAndActivity.obs,
-          key: 'hobbiesAndActivity'.obs),
-      DescribeathingsItemModel(
-          question: "Describe About you Favorite Location".obs,
+          question: "lbl_fav_location".tr.obs,
           answer: _user.aboutMe?.favLocation.obs,
           key: 'favLocation'.obs)
     ]);
-
+    Rx<List<DescribeathingsItemModel>> convertedAboutMe = Rx([
+      DescribeathingsItemModel(
+          question: "lbl_in_my".tr.obs,
+          answer: controller.convertedInMyFreeTime,
+          key: 'thingsYouLike'.obs),
+      DescribeathingsItemModel(
+        question: "lbl_abut_culture".tr.obs,
+        answer: controller.convertedAboutMyCulture,
+        key: 'aboutMyCulture'.obs,
+      ),
+      DescribeathingsItemModel(
+          question: "lbl_fav_location".tr.obs,
+          answer: controller.convertedFavLocation,
+          key: 'favLocation'.obs)
+    ]);
     return Column(
       children: List.generate(
           aboutMe.value.length,
           (index) => Container(
-                height: 160.v,
+                //height: 160.v,
                 width: double.maxFinite,
                 padding: EdgeInsets.only(top: 1.v),
-                //decoration: AppDecoration.outlineRed50,
                 child: Stack(
-                  alignment: Alignment.centerLeft,
+                  // alignment: Alignment.b,
                   children: [
-                    _buildQuestionAnswer(
-                        aboutMyFavorite: aboutMe.value[index].question!.value,
-                        loremIpsumDolor: aboutMe.value[index].answer!.value),
                     Obx(
-                      () => Visibility(
-                        visible: PrefUtils.getUserGender() == 'Female' ||
-                            controller.planName.value.isEmpty,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 167.h,
-                              vertical: 32.v,
-                            ),
-                            decoration: AppDecoration.fillPrimary1,
-                            child: CustomImageView(
-                              imagePath: ImageConstant.imgGroup25,
-                              height: 40.adaptSize,
-                              width: 40.adaptSize,
-                            ),
-                          ),
-                        ),
-                      ),
+                      () => _buildQuestionAnswer(
+                          aboutMyFavorite: aboutMe.value[index].question!.value,
+                          loremIpsumDolor: controller.isConverted.value
+                              ? convertedAboutMe.value[index].answer!.value
+                              : aboutMe.value[index].answer!.value),
                     ),
+                    _showSubscriptionBadge()
                   ],
                 ),
               )),
@@ -547,8 +1000,8 @@ class ProfileScreen extends GetWidget<ProfileController> {
             margin: EdgeInsets.only(right: 27.h),
             child: Text(
               loremIpsumDolor,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+              maxLines: 6,
+              //overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodyMedium!.copyWith(
                 color: appTheme.gray60004,
                 height: 1.43,

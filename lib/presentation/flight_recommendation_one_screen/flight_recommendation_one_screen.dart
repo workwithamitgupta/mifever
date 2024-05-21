@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
 import 'package:mifever/widgets/app_bar/appbar_subtitle.dart';
@@ -99,12 +98,14 @@ class FlightRecommendationOneScreen
                   Padding(
                     padding: EdgeInsets.only(top: 56.v),
                     child: _buildFrame(
-                        skyId: controller.dropLocationSkyId,
-                        entityId: controller.dropLocationEntityId,
-                        locationSix: ImageConstant.imgLocation06,
-                        hint: "lbl_tokyo".tr,
-                        textEditingController:
-                            controller.dropLocationToController),
+                      skyId: controller.dropLocationSkyId,
+                      entityId: controller.dropLocationEntityId,
+                      locationSix: ImageConstant.imgLocation06,
+                      hint: "lbl_tokyo".tr,
+                      textEditingController:
+                          controller.dropLocationToController,
+                      subTitle: controller.subTitle,
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(right: 12.h),
@@ -115,6 +116,17 @@ class FlightRecommendationOneScreen
                       decoration: IconButtonStyleHelper.outlinePrimaryTL15,
                       alignment: Alignment.centerRight,
                       child: CustomImageView(
+                        onTap: () {
+                          String drop =
+                              controller.dropLocationToController.text;
+                          String pick = controller.pickLocationController.text;
+                          controller.dropLocationToController.text = pick;
+                          controller.pickLocationController.text = drop;
+                          String dropId = controller.dropLocationEntityId.value;
+                          String pickId = controller.pickLocationEntityId.value;
+                          controller.dropLocationEntityId.value = pickId;
+                          controller.pickLocationEntityId.value = dropId;
+                        },
                         imagePath: ImageConstant.imgClock,
                       ),
                     ),
@@ -155,17 +167,22 @@ class FlightRecommendationOneScreen
                     ),
                   ),
                   Spacer(),
-                  Text(
-                    "lbl_tomorrow".tr,
-                    style: CustomTextStyles.titleSmallRedA200,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 8.h),
+                  InkWell(
+                    onTap: () {
+                      _onTapTomorrow();
+                    },
                     child: Text(
-                      "lbl_27_feb".tr,
+                      "lbl_tomorrow".tr,
                       style: CustomTextStyles.titleSmallRedA200,
                     ),
                   ),
+                  // Padding(
+                  //   padding: EdgeInsets.only(left: 8.h),
+                  //   child: Text(
+                  //     "lbl_27_feb".tr,
+                  //     style: CustomTextStyles.titleSmallRedA200,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -173,11 +190,14 @@ class FlightRecommendationOneScreen
             CustomElevatedButton(
               text: "lbl_search_flights".tr,
               onPressed: () async {
-                log('on');
-                ProgressDialogUtils.showProgressDialog();
-                await controller.getFlight();
-                ProgressDialogUtils.hideProgressDialog();
-                Get.toNamed(AppRoutes.flightRecommendationScreen);
+                if (controller.dropLocationToController.text.isNotEmpty &&
+                    controller.pickLocationController.text.isNotEmpty &&
+                    controller.selectedDate.value != 'Select Date') {
+                  ProgressDialogUtils.showProgressDialog();
+                  await controller.getFlight();
+                  ProgressDialogUtils.hideProgressDialog();
+                  Get.toNamed(AppRoutes.flightRecommendationScreen);
+                } else {}
               },
             ),
           ],
@@ -193,6 +213,7 @@ class FlightRecommendationOneScreen
     required TextEditingController textEditingController,
     required RxString entityId,
     required RxString skyId,
+    RxString? subTitle,
   }) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -240,8 +261,8 @@ class FlightRecommendationOneScreen
                               },
                               onChanged: (val) {
                                 print('val:$val');
-                                if (val.length > 3) {
-                                  Future.delayed(Duration(seconds: 3), () {
+                                if (val.length > 2) {
+                                  Future.delayed(Duration(seconds: 2), () {
                                     controller.showFlightSuggestion(val);
                                   });
                                 }
@@ -267,6 +288,13 @@ class FlightRecommendationOneScreen
                                           .navigation
                                           .relevantFlightParams
                                           .skyId;
+                                      if (subTitle != null) {
+                                        subTitle.value = controller
+                                            .suggestions[index]
+                                            .presentation
+                                            .subtitle;
+                                        print(controller.subTitle.value);
+                                      }
                                       controller.suggestions.clear();
                                       Get.back();
                                     },
@@ -285,6 +313,7 @@ class FlightRecommendationOneScreen
               },
               controller: textEditingController,
               cursorColor: appTheme.redA200,
+              readOnly: true,
               decoration: InputDecoration(
                   hintStyle: TextStyle(fontSize: 12.fSize),
                   border: InputBorder.none,
@@ -312,7 +341,7 @@ class FlightRecommendationOneScreen
                   data: ThemeData(indicatorColor: appTheme.redA200),
                   child: CalendarDatePicker(
                     initialDate: controller.initialDateTime.value,
-                    firstDate: DateTime(1900),
+                    firstDate: DateTime.now().add(Duration(days: 1)),
                     lastDate: DateTime(2030),
                     onDateChanged: (DateTime date) {
                       if (date != controller.initialDateTime.value) {
@@ -342,8 +371,9 @@ class FlightRecommendationOneScreen
                   minimumSize: Size(140.v, 50.v),
                   backgroundColor: appTheme.redA200),
               onPressed: () {
-                controller.selectedDate.value =
-                    '${controller.initialDateTime.value.year}-${controller.initialDateTime.value.month}-${controller.initialDateTime.value.day}';
+                String formattedDate = DateFormat('yyyy-MM-dd')
+                    .format(controller.initialDateTime.value);
+                controller.selectedDate.value = formattedDate;
                 Navigator.of(context).pop();
               },
               child: Text(
@@ -360,5 +390,11 @@ class FlightRecommendationOneScreen
       controller.selectedDate.value =
           '${picked.year}-${picked.month}-${picked.day}';
     }
+  }
+
+  _onTapTomorrow() {
+    DateTime todayDate = DateTime.now().add(Duration(days: 1));
+    String formattedDate = DateFormat('yyyy-MM-dd').format(todayDate);
+    controller.selectedDate.value = formattedDate;
   }
 }

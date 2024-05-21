@@ -60,8 +60,11 @@ class Frame7ItemWidget extends StatelessWidget {
           SizedBox(height: 11.v),
           CustomElevatedButton(
             onPressed: () {
-              Get.toNamed(AppRoutes.subscriptionPlansScreen,
-                  arguments: [frame7ItemModelObj.id!.value]);
+              Get.toNamed(AppRoutes.subscriptionPlansScreen, parameters: {
+                'index': frame7ItemModelObj.id!.value == PlanType.Platinum.name
+                    ? '1'
+                    : '0'
+              });
             },
             height: 30.v,
             width: 110.h,

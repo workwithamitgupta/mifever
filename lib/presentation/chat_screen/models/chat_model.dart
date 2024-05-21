@@ -1,3 +1,5 @@
+import '../../../data/models/travel_plan/travel_plan_model.dart';
+
 class ChatModel {
   final String? dcoId;
   final String? roomId;
@@ -13,6 +15,10 @@ class ChatModel {
   final int? linkCount;
   final List? userIdsOfUsersForStarredMessage;
   final List? userIdsOfUsersForDeletedMessage;
+  final String? thumbnailUrl;
+  final TravelPlanModel? travelPlan;
+  final int? voiceDuration;
+
   ChatModel({
     this.dcoId,
     this.roomId,
@@ -28,27 +34,34 @@ class ChatModel {
     this.isSeen,
     this.userIdsOfUsersForStarredMessage,
     this.userIdsOfUsersForDeletedMessage,
+    this.thumbnailUrl,
+    this.travelPlan,
+    this.voiceDuration,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {
     return ChatModel(
-      roomId: json["roomId"] ?? '',
-      dcoId: json["dcoId"] ?? '',
-      receiverId: json['receiverId'] ?? '',
-      senderId: json['senderId'] ?? '',
-      message: json['message'] ?? '',
-      timestamp: json['timestamp'] ?? '',
-      type: json['type'] ?? '',
-      linkCount: json['linkCount'] ?? 0,
-      url: json['url'] ?? '',
-      isSeen: json['isSeen'] ?? false,
-      userIdsOfUsersForStarredMessage:
-          json['userIdsOfUsersForStarredMessage'] ?? [],
-      userIdsOfUsersForDeletedMessage:
-          json['userIdsOfUsersForDeletedMessage'] ?? [],
-      fileName: json['fileName'] ?? '',
-      fileExtension: json['fileExtension'] ?? '',
-    );
+        roomId: json["roomId"] ?? '',
+        dcoId: json["dcoId"] ?? '',
+        receiverId: json['receiverId'] ?? '',
+        senderId: json['senderId'] ?? '',
+        message: json['message'] ?? '',
+        timestamp: json['timestamp'] ?? '',
+        type: json['type'] ?? '',
+        linkCount: json['linkCount'] ?? 0,
+        url: json['url'] ?? '',
+        isSeen: json['isSeen'] ?? false,
+        userIdsOfUsersForStarredMessage:
+            json['userIdsOfUsersForStarredMessage'] ?? [],
+        userIdsOfUsersForDeletedMessage:
+            json['userIdsOfUsersForDeletedMessage'] ?? [],
+        fileName: json['fileName'] ?? '',
+        fileExtension: json['fileExtension'] ?? '',
+        thumbnailUrl: json['thumbnailUrl'] ?? '',
+        travelPlan: json['travelPlan'] != null
+            ? TravelPlanModel.fromJson(json['travelPlan'])
+            : TravelPlanModel(),
+        voiceDuration: json['voiceDuration'] ?? 60);
   }
 
   Map<String, dynamic> toJson() {
@@ -69,6 +82,9 @@ class ChatModel {
         'userIdsOfUsersForStarredMessage': userIdsOfUsersForStarredMessage,
       if (userIdsOfUsersForDeletedMessage != null)
         'userIdsOfUsersForDeletedMessage': userIdsOfUsersForDeletedMessage,
+      if (thumbnailUrl != null) 'thumbnailUrl': thumbnailUrl,
+      if (travelPlan != null) 'travelPlan': travelPlan!.toJson(),
+      if (voiceDuration != null) 'voiceDuration': voiceDuration,
     };
   }
 }

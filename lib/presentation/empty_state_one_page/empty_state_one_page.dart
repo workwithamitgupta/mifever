@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
+import 'package:mifever/widgets/custom_bottom_bar.dart';
 import 'package:mifever/widgets/custom_elevated_button.dart';
 
 import 'controller/empty_state_one_controller.dart';
@@ -34,16 +35,13 @@ class EmptyStateOnePage extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 120.adaptSize,
-            width: 120.adaptSize,
-            padding: EdgeInsets.all(28.h),
+            height: 120.h,
+            width: 120.v,
             decoration: AppDecoration.fillRed.copyWith(
               borderRadius: BorderRadiusStyle.circleBorder60,
             ),
             child: CustomImageView(
               imagePath: ImageConstant.imgUserOnprimary,
-              height: 64.adaptSize,
-              width: 64.adaptSize,
               alignment: Alignment.center,
             ),
           ),
@@ -59,6 +57,10 @@ class EmptyStateOnePage extends StatelessWidget {
           ),
           SizedBox(height: 14.v),
           CustomElevatedButton(
+            onPressed: () {
+              final controller = Get.find<CustomBottomBarController>();
+              controller.selectedIndex.value = 0;
+            },
             text: "lbl_keep_scrolling2".tr,
           ),
         ],

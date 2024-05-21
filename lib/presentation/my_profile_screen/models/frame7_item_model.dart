@@ -20,7 +20,4 @@ class Frame7ItemModel {
   Rx<String>? id;
 }
 
-enum PlanType {
-  Platinum,
-  Gold,
-}
+enum PlanType { Platinum, Gold, TextTries }

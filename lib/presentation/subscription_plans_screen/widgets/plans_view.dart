@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/data/models/subscriptions/subscription_model.dart';
 import 'package:mifever/presentation/subscription_plans_screen/widgets/plan_price_widget.dart';
@@ -33,7 +34,7 @@ class PlansView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomImageView(
-                    imagePath: controller.selectedIndex.value == 0
+                    imagePath: controller.selectedIndex.value == 1
                         ? ImageConstant.imgPlatinum
                         : ImageConstant.imgGroup25Gray900112x112,
                     height: 112.adaptSize,
@@ -45,7 +46,7 @@ class PlansView extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Obx(
                       () => Text(
-                        controller.selectedIndex.value == 0
+                        controller.selectedIndex.value == 1
                             ? "lbl_platinum_plan".tr
                             : "lbl_gold_plan".tr,
                         style: CustomTextStyles.headlineSmallPrimary,
@@ -56,14 +57,16 @@ class PlansView extends StatelessWidget {
                   Align(
                     alignment: Alignment.center,
                     child: Text(
-                      "msg_lorem_ipsum_dolor5".tr,
+                      controller.selectedIndex.value == 1
+                          ? "lbl_get_platinum_push".tr
+                          : "lbl_get_your_gold".tr,
                       style: CustomTextStyles.bodyMediumPrimary,
                     ),
                   ),
                   SizedBox(height: 22.v),
                   Obx(
                     () => _buildPlanFeature(
-                      controller.selectedIndex.value == 0
+                      controller.selectedIndex.value == 1
                           ? controller.subscriptionPlansModelObj.value
                               .plansFeatureListPlatinum
                           : controller.subscriptionPlansModelObj.value
@@ -73,7 +76,7 @@ class PlansView extends StatelessWidget {
                   SizedBox(height: 24.v),
                   Obx(
                     () => _buildFrame(
-                      controller.selectedIndex.value == 0
+                      controller.selectedIndex.value == 1
                           ? controller
                               .subscriptionPlansModelObj.value.plansListPlatinum
                           : controller
@@ -88,15 +91,20 @@ class PlansView extends StatelessWidget {
                     buttonTextStyle: TextStyle(color: Colors.black),
                     alignment: Alignment.center,
                     onPressed: () async {
-                      SubscriptionModel subscriptionModel = SubscriptionModel(
-                        userId: PrefUtils.getId(),
-                        plan: controller.selectedPlanModel.value,
-                        timestamp: DateTime.now().toString(),
-                        expireTimestamp: getExpireTimestamp(
-                            controller.selectedPlanModel.value.duration!.value),
-                      );
-                      await StripePaymentHandle.stripeMakePayment(
-                          subscriptionModel);
+                      if (controller
+                          .selectedPlanModel.value.id!.value.isEmpty) {
+                        Fluttertoast.showToast(msg: 'Select plan');
+                      } else {
+                        SubscriptionModel subscriptionModel = SubscriptionModel(
+                          userId: PrefUtils.getId(),
+                          plan: controller.selectedPlanModel.value,
+                          timestamp: DateTime.now().toUtc().toString(),
+                          expireTimestamp: getExpireTimestamp(controller
+                              .selectedPlanModel.value.duration!.value),
+                        );
+                        await StripePaymentHandle.stripeMakePayment(
+                            subscriptionModel);
+                      }
                     },
                   ),
                 ],
@@ -163,7 +171,7 @@ class PlansView extends StatelessWidget {
   /// Section Widget
   Widget _buildFrame(Rx<List<PlansModel>> list) {
     return SizedBox(
-      height: 127.v,
+      height: 137.v,
       child: Obx(
         () => ListView.separated(
           padding: EdgeInsets.only(left: 12.h),

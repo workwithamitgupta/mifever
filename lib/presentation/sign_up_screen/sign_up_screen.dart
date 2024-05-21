@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/core/utils/validation_functions.dart';
 import 'package:mifever/widgets/app_bar/appbar_leading_image.dart';
@@ -167,16 +168,26 @@ class SignUpScreen extends GetWidget<SignUpController> {
     if (!isValid) {
       return;
     } else {
-      int otp = generateRandomNumber();
-      await PrefUtils.saveOtp(otp);
-      debugPrint('otp===>$otp');
-      await sendMail(
-          email: controller.emailController.text,
-          text: 'Your otp for MiFever verification is'.tr + "$otp");
-      Get.toNamed(AppRoutes.verificationScreen, parameters: {
-        'email': controller.emailController.text.trim(),
-        'route': AppRoutes.signUpScreen,
-      });
+      bool isEmailInUse = await FirebaseServices.checkEmailExists(
+          controller.emailController.text);
+      if (isEmailInUse) {
+        Fluttertoast.showToast(msg: 'lbl_email_already_use'.tr);
+      } else {
+        int otp = generateRandomNumber();
+        await PrefUtils.saveOtp(otp);
+        debugPrint('otp===>$otp');
+        await sendMail(
+            subject: 'MiFever - OTP for Authentication',
+            fullName: PrefUtils.getUserName(),
+            email: controller.emailController.text,
+            text:
+                "Your one time password (OTP) is $otp.\nThis OTP is valid for 90 seconds. Never share this OTP with anyone else.\n\n\nWarm regards,\nMiFever Team");
+
+        Get.toNamed(AppRoutes.verificationScreen, parameters: {
+          'email': controller.emailController.text.trim(),
+          'route': AppRoutes.signUpScreen,
+        });
+      }
     }
   }
 }

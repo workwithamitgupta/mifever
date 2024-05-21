@@ -34,13 +34,21 @@ class MyLikesPage extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SkeletonListView();
               }
-              var data = snapshot.data!.docs;
+              var data = snapshot.data?.docs ?? [];
               List<NotificationModel> notifications = <NotificationModel>[];
               notifications.clear();
               notifications = data
+                  .where((e) =>
+                      e['type'] !=
+                      NotificationType
+                          .DisLike.name) // Filter out items with null ID
                   .map((e) => NotificationModel.fromJson(
                       e.data() as Map<String, dynamic>))
                   .toList();
+              // notifications = data
+              //     .map((e) => NotificationModel.fromJson(
+              //         e.data() as Map<String, dynamic>))
+              //     .toList();
               if (notifications.length == 0) {
                 return EmptyStateOnePage();
               }
@@ -58,10 +66,10 @@ class MyLikesPage extends StatelessWidget {
                         children: [
                           // _buildToday(),
                           // SizedBox(height: 22.v),
-                          Text(
-                            "lbl_17_feb_2024".tr,
-                            style: CustomTextStyles.labelMediumGray60004,
-                          ),
+                          // Text(
+                          //   "lbl_17_feb_2024".tr,
+                          //   style: CustomTextStyles.labelMediumGray60004,
+                          // ),
                           SizedBox(height: 11.v),
                           _buildNotification(notifications),
                           SizedBox(height: 15.v),
@@ -147,13 +155,16 @@ class MyLikesPage extends StatelessWidget {
                 notifications[index].notificationTo),
             builder: (context, usersSnapshot) {
               if (usersSnapshot.connectionState == ConnectionState.waiting) {
-                return SkeletonListView();
+                return SizedBox.shrink();
               }
               UserModel _user = UserModel();
-              var data = usersSnapshot.data!;
+              DocumentSnapshot<Object?> data = usersSnapshot.data!;
               _user = UserModel.fromJson(data.data() as Map<String, dynamic>);
               NotificationItemModel model = NotificationItemModel()
-                ..notificationImage = RxString(_user.wayAlbum![0])
+                ..id = RxString(_user.id!)
+                ..notificationImage = RxString(_user.profileImage!.isNotEmpty
+                    ? _user.profileImage
+                    : _user.wayAlbum![0])
                 ..notificationText = RxString(getNotificationText(
                     notification: notifications[index], user: _user))
                 ..time = RxString(notifications[index].createdAt);
@@ -168,10 +179,11 @@ class MyLikesPage extends StatelessWidget {
   String getNotificationText(
       {required NotificationModel notification, required UserModel user}) {
     if (notification.type == NotificationType.View.name) {
-      return "You Viewed ${user.name} Profile";
+      return "lbl_you_viewed".tr + " ${user.name} " + "lbl_profile".tr;
     } else if (notification.type == NotificationType.Chat.name) {
-      return "You sent message to ${user.name}";
+      return "lbl_you_sent_message".tr + " ${user.name}";
     }
-    return "You liked ${user.name} Profile";
+    return "lbl_you_liked".tr + " ${user.name} ";
+    //+ "lbl_profile".tr;
   }
 }

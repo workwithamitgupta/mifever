@@ -6,7 +6,9 @@ import 'package:mifever/widgets/app_bar/custom_app_bar.dart';
 import 'package:mifever/widgets/custom_elevated_button.dart';
 import 'package:mifever/widgets/custom_pin_code_text_field.dart';
 
+import '../../data/sevices/firebase_services.dart';
 import '../../data/sevices/smtp_service.dart';
+import '../../widgets/custom_bottom_bar.dart';
 import 'controller/verification_controller.dart';
 
 // ignore_for_file: must_be_immutable
@@ -93,14 +95,17 @@ class VerificationScreen extends GetWidget<VerificationController> {
                             controller.seconds.value == 0
                         ? InkWell(
                             onTap: () async {
+                              controller.otpController.value.clear();
                               int otp = generateRandomNumber();
                               await PrefUtils.saveOtp(otp);
                               debugPrint('otp===>$otp');
                               await sendMail(
+                                  subject: 'MiFever - OTP for Authentication',
+                                  fullName: PrefUtils.getUserName(),
                                   email: controller.email.value,
-                                  text: 'Your otp for MiFever verification is'
-                                          .tr +
-                                      "$otp");
+                                  text:
+                                      "Your one time password (OTP) is $otp.\nThis OTP is valid for 90 seconds. Never share this OTP with anyone else.\n\n\nWarm regards,\nMiFever Team");
+
                               controller.startTimer();
                             },
                             child: Text(
@@ -109,30 +114,13 @@ class VerificationScreen extends GetWidget<VerificationController> {
                             ),
                           )
                         : Text(
-                            '${controller.minutes.value}:${controller.seconds.value} ',
+                            '0${controller.minutes.value}:${controller.seconds.value.toString().length == 1 ? "0${controller.seconds.value}" : controller.seconds.value} ',
                             //"lbl_01_30".tr,
                             style: CustomTextStyles.titleSmallfff84754,
                           ),
                   ),
                 ],
               ),
-              // RichText(
-              //   text: TextSpan(
-              //     children: [
-              //       TextSpan(
-              //         text: "msg_otp_will_expire2".tr,
-              //         style: CustomTextStyles.bodyMediumff767676,
-              //       ),
-              //       TextSpan(
-              //         text:
-              //         //"lbl_01_30".tr,
-              //         style: CustomTextStyles.titleSmallfff84754,
-              //       ),
-              //     ],
-              //   ),
-              //   textAlign: TextAlign.left,
-              // ),
-
               SizedBox(height: 22.v),
               Obx(
                 () => CustomElevatedButton(
@@ -185,7 +173,20 @@ class VerificationScreen extends GetWidget<VerificationController> {
             AppRoutes.forgotPasswordVerificationOneScreen) {
           Get.toNamed(AppRoutes.createNewPasswordScreen);
         } else {
-          Get.offAllNamed(AppRoutes.questionOneScreen);
+          FirebaseServices.getCurrentUser().then((user) {
+            if (user != null) {
+              if (user.isProfileComplete ?? false) {
+                PrefUtils.setUserName(user.name ?? '').then((value) {});
+                Get.offAll(() => CustomBottomBar());
+              } else {
+                Get.toNamed(AppRoutes.questionOneScreen);
+              }
+            } else {
+              PrefUtils.clearPreferencesData();
+              Get.offAllNamed(AppRoutes.onboardingScreen);
+            }
+          });
+          // FirebaseServices.getCurrentUser().then((user) async {}
         }
       }
     } else {

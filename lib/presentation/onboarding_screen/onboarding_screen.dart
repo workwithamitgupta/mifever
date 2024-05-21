@@ -1,4 +1,5 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:mifever/core/app_export.dart';
 import 'package:mifever/data/sevices/firebase_services.dart';
@@ -6,6 +7,7 @@ import 'package:mifever/widgets/custom_elevated_button.dart';
 import 'package:mifever/widgets/custom_icon_button.dart';
 import 'package:mifever/widgets/custom_outlined_button.dart';
 
+import '../community_guidelines /community_guidelines.dart';
 import 'controller/onboarding_controller.dart';
 
 // ignore_for_file: must_be_immutable
@@ -20,110 +22,184 @@ class OnboardingScreen extends GetWidget<OnboardingController> {
           width: double.maxFinite,
           padding: EdgeInsets.symmetric(
             horizontal: 20.h,
-            vertical: 34.v,
+            // vertical: 34.v,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 40.v),
-              _buildStackOne(),
-              SizedBox(height: 73.v),
-              Container(
-                width: 272.h,
-                margin: EdgeInsets.only(right: 63.h),
-                child: Text(
-                  "msg_find_your_perfect".tr,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.headlineSmall!.copyWith(
-                    height: 1.33,
-                  ),
-                ),
-              ),
-              SizedBox(height: 8.v),
-              Text(
-                "msg_connect_with_people".tr,
-                style: theme.textTheme.bodyMedium,
-              ),
-              SizedBox(height: 28.v),
-              CustomElevatedButton(
-                onPressed: () {
-                  FirebaseServices.signInWithGoogle();
-                },
-                height: 48.v,
-                text: "msg_continue_with_google".tr,
-                leftIcon: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 9.h,
-                    vertical: 6.v,
-                  ),
-                  margin: EdgeInsets.only(right: 8.h),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primary,
-                    borderRadius: BorderRadius.circular(
-                      15.h,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 40.v),
+                _buildStackOne(),
+                SizedBox(height: 53.v),
+                Container(
+                  width: 272.h,
+                  margin: EdgeInsets.only(right: 63.h),
+                  child: Text(
+                    "msg_find_your_perfect".tr,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.headlineSmall!.copyWith(
+                      height: 1.33,
                     ),
                   ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgImage1599,
-                    height: 18.adaptSize,
-                    width: 18.adaptSize,
-                  ),
                 ),
-                buttonStyle: CustomButtonStyles.fillRedA,
-              ),
-              SizedBox(height: 20.v),
-              CustomOutlinedButton(
-                height: 48.v,
-                text: "msg_continue_with_email".tr,
-                leftIcon: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 9.h,
-                    vertical: 6.v,
-                  ),
-                  margin: EdgeInsets.only(right: 8.h),
-                  decoration: BoxDecoration(
-                    color: appTheme.redA200,
-                    borderRadius: BorderRadius.circular(
-                      15.h,
-                    ),
-                  ),
-                  child: CustomImageView(
-                    imagePath: ImageConstant.imgMail02,
-                    height: 18.adaptSize,
-                    width: 18.adaptSize,
-                  ),
+                SizedBox(height: 8.v),
+                Text(
+                  "msg_connect_with_people".tr,
+                  style: theme.textTheme.bodyMedium,
                 ),
-                buttonStyle: CustomButtonStyles.outlineRedA,
-                onPressed: _onTapContinueWithEmail,
-              ),
-              SizedBox(height: 29.v),
-              Align(
-                alignment: Alignment.center,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 1.v),
-                      child: Text(
-                        "msg_don_t_have_an_account".tr,
-                        style: theme.textTheme.titleSmall,
+                SizedBox(height: 28.v),
+                Obx(
+                  () => CustomElevatedButton(
+                    onPressed: controller.isAgree.value
+                        ? () {
+                            FirebaseServices.signInWithGoogle();
+                          }
+                        : null,
+                    height: 48.v,
+                    text: "msg_continue_with_google".tr,
+                    leftIcon: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 9.h,
+                        vertical: 6.v,
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 8.h),
-                      child: InkWell(
-                        onTap: onTapSIngUp,
-                        child: Text(
-                          "lbl_sign_up".tr,
-                          style: CustomTextStyles.titleSmallRedA200,
+                      margin: EdgeInsets.only(right: 8.h),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary,
+                        borderRadius: BorderRadius.circular(
+                          15.h,
                         ),
                       ),
+                      child: CustomImageView(
+                        imagePath: ImageConstant.imgImage1599,
+                        height: 18.adaptSize,
+                        width: 18.adaptSize,
+                      ),
+                    ),
+                    buttonStyle: controller.isAgree.value
+                        ? CustomButtonStyles.fillRedA
+                        : CustomButtonStyles.fillGray,
+                  ),
+                ),
+                SizedBox(height: 20.v),
+                Obx(
+                  () => CustomOutlinedButton(
+                    height: 48.v,
+                    text: "msg_continue_with_email".tr,
+                    leftIcon: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 9.h,
+                        vertical: 6.v,
+                      ),
+                      margin: EdgeInsets.only(right: 8.h),
+                      decoration: BoxDecoration(
+                        color: controller.isAgree.value
+                            ? appTheme.redA200
+                            : appTheme.gray200,
+                        borderRadius: BorderRadius.circular(
+                          15.h,
+                        ),
+                      ),
+                      child: CustomImageView(
+                        imagePath: ImageConstant.imgMail02,
+                        height: 18.adaptSize,
+                        width: 18.adaptSize,
+                      ),
+                    ),
+                    buttonStyle: controller.isAgree.value
+                        ? CustomButtonStyles.outlineRedA
+                        : CustomButtonStyles.outlineGray,
+                    onPressed: controller.isAgree.value
+                        ? _onTapContinueWithEmail
+                        : null,
+                  ),
+                ),
+                SizedBox(height: 15.v),
+                Align(
+                  alignment: Alignment.center,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 1.v),
+                        child: Text(
+                          "msg_don_t_have_an_account".tr,
+                          style: theme.textTheme.titleSmall,
+                        ),
+                      ),
+                      Obx(
+                        () => Padding(
+                          padding: EdgeInsets.only(left: 8.h),
+                          child: InkWell(
+                            onTap:
+                                controller.isAgree.value ? onTapSIngUp : null,
+                            child: Text(
+                              "lbl_sign_up".tr,
+                              style: controller.isAgree.value
+                                  ? CustomTextStyles.titleSmallRedA200
+                                  : CustomTextStyles.titleSmallGray60004Medium,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(
+                      () => Checkbox(
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          side: BorderSide(color: Colors.grey),
+                          checkColor: Colors.white,
+                          activeColor: Colors.red,
+                          value: controller.isAgree.value,
+                          onChanged: (val) {
+                            controller.isAgree.value = val!;
+                          }),
+                    ),
+                    Expanded(
+                      child: Text.rich(TextSpan(children: [
+                        TextSpan(
+                          text: 'I agree to the, ',
+                        ),
+                        TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.toNamed(AppRoutes.termsAndConditionsScreen);
+                            },
+                          text: 'Terms and Conditions, ',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.toNamed(AppRoutes.privacyAndPolicyScreen);
+                            },
+                          text: 'Privacy Policy, ',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        TextSpan(
+                          text: 'and ',
+                        ),
+                        TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Get.to(() => CommunityGuidelines());
+                              //Get.toNamed(AppRoutes.privacyAndPolicyScreen);
+                            },
+                          text: 'Community Guidelines.',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ])),
                     ),
                   ],
-                ),
-              ),
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -134,7 +210,7 @@ class OnboardingScreen extends GetWidget<OnboardingController> {
     Get.toNamed(AppRoutes.signUpScreen);
   }
 
-  void _onTapContinueWithEmail() {
+  Future<void> _onTapContinueWithEmail() async {
     Get.toNamed(AppRoutes.signInScreen);
   }
 

@@ -7,13 +7,16 @@ import 'widgets/plans_view.dart';
 // ignore_for_file: must_be_immutable
 class SubscriptionPlansScreen extends GetWidget<SubscriptionPlansController> {
   SubscriptionPlansScreen({Key? key}) : super(key: key);
-
+  String index = Get.parameters['index'] ?? '';
   @override
   Widget build(BuildContext context) {
+    if (index.isNotEmpty) {
+      controller.tabViewController.index = int.parse(index);
+    }
     return SafeArea(
       child: Obx(
         () => Scaffold(
-          backgroundColor: controller.selectedIndex.value == 1
+          backgroundColor: controller.selectedIndex.value == 0
               ? appTheme.lime800
               : appTheme.gray600,
           body: SizedBox(
@@ -111,12 +114,12 @@ class SubscriptionPlansScreen extends GetWidget<SubscriptionPlansController> {
           tabs: [
             Tab(
               child: Text(
-                "lbl_platinum_plan2".tr,
+                "lbl_gold_plan".tr,
               ),
             ),
             Tab(
               child: Text(
-                "lbl_gold_plan".tr,
+                "lbl_platinum_plan2".tr,
               ),
             ),
           ],

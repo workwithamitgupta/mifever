@@ -13,11 +13,15 @@ class VoiceMessageWidget extends StatelessWidget {
           ? Alignment.centerRight
           : Alignment.centerLeft,
       child: VoiceMessageView(
-        backgroundColor:
-            chat.senderId == PrefUtils.getId() ? Colors.white : appTheme.red50,
+        innerPadding: 4,
+        backgroundColor: chat.senderId == PrefUtils.getId()
+            ? Colors.redAccent
+            : appTheme.red50,
+        activeSliderColor:
+            chat.senderId == PrefUtils.getId() ? Colors.white : Colors.red,
         controller: VoiceController(
           audioSrc: chat.url!,
-          maxDuration: const Duration(seconds: 60),
+          maxDuration: Duration(seconds: chat.voiceDuration ?? 60),
           isFile: false,
           onComplete: () {},
           onPause: () {},
